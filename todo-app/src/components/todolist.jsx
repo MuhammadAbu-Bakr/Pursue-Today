@@ -39,7 +39,7 @@ function Todolist(){
     const taskToEdit = tasks.find(task => task.id === id);
 
     const updatedText = prompt(
-        "Edit your task (you can use multiple lines):",
+        "Edit your task ",
         taskToEdit.text
     );
 
