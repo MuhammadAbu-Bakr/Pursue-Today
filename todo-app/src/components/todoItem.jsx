@@ -1,23 +1,38 @@
-import '../App.css'
+import "../App.css";
+import { useTodo } from "../context/TodoContext";
 
-export default function TodoItem(props) {
+export default function TodoItem() {
+  const {
+    tasks,
+    editingId,
+    editText,
+    toggleTask,
+    delTask,
+    startEdit,
+    handleEditChange,
+    cancelEdit,
+    saveEdit,
+  } = useTodo();
   return (
     <ol>
-      {props.tasks.map((task) => (
-        <li key={task.id} className={task.completed ? "completed" : ""}>
-          {props.editingId === task.id ? (
+      {tasks.map((task) => (
+        <li
+          key={task.id}
+          className={task.completed ? "completed" : ""}
+        >
+          {editingId === task.id ? (
             <div className="edit-wrapper">
               <textarea
                 className="edit-textarea"
-                value={props.editText}
-                onChange={props.handleEditChange}
+                value={editText}
+                onChange={handleEditChange}
                 autoFocus
               />
               <div className="edit-actions">
-                <button className="cancel-Btn" onClick={props.cancelEdit}>
+                <button className="cancel-Btn" onClick={cancelEdit} >
                   Cancel
                 </button>
-                <button className="save-Btn" onClick={() => props.saveEdit(task.id)}>
+                <button className="save-Btn" onClick={() => saveEdit(task.id)} >
                   Save
                 </button>
               </div>
@@ -27,13 +42,24 @@ export default function TodoItem(props) {
               <input
                 type="checkbox"
                 checked={task.completed}
-                onChange={() => props.toggleTask(task.id)}
+                onChange={() => toggleTask(task.id)}
               />
-              <span className="text">{task.text}</span>
-              <button className="edit-Btn" onClick={() => props.startEdit(task)}>
+
+              <span className="text">
+                {task.text}
+              </span>
+
+              <button
+                className="edit-Btn"
+                onClick={() => startEdit(task)}
+              >
                 Edit ✏️
               </button>
-              <button className="del-Btn" onClick={() => props.delTask(task.id)}>
+
+              <button
+                className="del-Btn"
+                onClick={() => delTask(task.id)}
+              >
                 Delete 🗑️
               </button>
             </>
