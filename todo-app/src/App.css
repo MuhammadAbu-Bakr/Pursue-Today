@@ -58,6 +58,7 @@ input[type="text"]:focus {
   cursor: pointer;
   margin-bottom: 20px;
   transition: background 0.2s;
+  outline: none;
 }
 .add-Btn:hover {
   background: #5a4bd1;
@@ -110,6 +111,8 @@ li.completed .text {
   border-radius: 6px;
   transition: background 0.2s;
   color:black;
+  outline: none;
+
 }
 
 .edit-Btn:hover {
@@ -169,4 +172,15 @@ li.completed .text {
   .del-Btn {
     font-size: 13px;
   }
+}
+.edit-Btn,
+.del-Btn,
+.add-Btn {
+  outline: none;
+}
+.edit-Btn:focus,
+.del-Btn:focus,
+.add-Btn:focus {
+  outline: none;
+  box-shadow: none;
 }

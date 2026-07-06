@@ -10,7 +10,11 @@ function Todolist(){
 	function handleInputChange(event){
 		setNewTask(event.target.value);
 	}
-	
+	function handleKeyDown(event) {
+  		if (event.key === "Enter") {
+    	addTask();
+  		}
+	}
 	function toggleTask(id){
 		setTasks(t=>t.map(task=>
 		task.id === id ?{...task,completed: !task.completed}:task
@@ -62,6 +66,7 @@ function Todolist(){
 			newTask={newTask}
 			handleInputChange={handleInputChange}
 			addTask={addTask}
+			handleKeyDown={handleKeyDown}
 			/>		
 		<ToDoItem
 			tasks={tasks}
