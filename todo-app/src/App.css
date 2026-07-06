@@ -122,3 +122,51 @@ li.completed .text {
 .todo:hover{
  transform: scale(1.02);
 }
+
+@media (max-width: 768px) {
+  .todo {
+    width: 90%;
+    padding: 24px;
+  }
+
+  .head {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 15px;
+    align-items: flex-start;
+    padding-top: 30px;
+  }
+
+  .todo {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .head {
+    font-size: 22px;
+  }
+
+  input[type="text"] {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+  .add-Btn {
+    font-size: 14px;
+    padding: 9px;
+  }
+  li {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .text {
+    font-size: 14px;
+  }
+  .edit-Btn,
+  .del-Btn {
+    font-size: 13px;
+  }
+}
