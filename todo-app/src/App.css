@@ -1,24 +1,33 @@
 * {
   box-sizing: border-box;
 }
+
 body {
   background: #f4f6f8;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: "Segoe UI", system-ui, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
-  
+  margin: 0;
+  padding: 20px;
 }
+
 .todo {
   background: #ffffff;
   width: 420px;
+  max-width: 100%;
   padding: 28px 32px;
   border-radius: 14px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease-in-out;
 }
+
+.todo:hover {
+  transform: scale(1.02);
+}
+
 .head {
   text-align: center;
   color: #1e1e2f;
@@ -27,25 +36,49 @@ body {
   font-weight: 700;
   letter-spacing: 0.5px;
 }
-
 .todo > div {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-bottom: 12px;
 }
 
-input[type="text"] {
-  flex: 1;
-  padding: 10px 14px;
+textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 12px 14px;
   border: 1px solid #dcdde1;
   border-radius: 8px;
   font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
   outline: none;
   transition: border-color 0.2s;
+  line-height: 1.5;
 }
-input[type="text"]:focus {
+
+textarea:focus {
   border-color: #6c5ce7;
 }
+
+.edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px 12px;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  line-height: 1.5;
+}
+
+.edit-textarea:focus {
+  border-color: #6c5ce7;
+}
+
+/* Add Button */
 .add-Btn {
   width: 100%;
   padding: 10px;
@@ -60,9 +93,11 @@ input[type="text"]:focus {
   transition: background 0.2s;
   outline: none;
 }
+
 .add-Btn:hover {
   background: #5a4bd1;
 }
+
 ol {
   list-style: none;
   padding: 0;
@@ -74,7 +109,7 @@ ol {
 
 li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   padding: 10px 12px;
   background: #f9f9fc;
@@ -87,13 +122,16 @@ li input[type="checkbox"] {
   height: 18px;
   cursor: pointer;
   accent-color: #6c5ce7;
+  margin-top: 3px;
 }
 
 .text {
   flex: 1;
   font-size: 15px;
   color: #2d3436;
+  white-space: pre-wrap;
   word-break: break-word;
+  line-height: 1.5;
 }
 
 li.completed .text {
@@ -101,6 +139,7 @@ li.completed .text {
   color: #b2bec3;
 }
 
+/* Buttons */
 .edit-Btn,
 .del-Btn {
   border: none;
@@ -110,9 +149,9 @@ li.completed .text {
   padding: 4px 6px;
   border-radius: 6px;
   transition: background 0.2s;
-  color:black;
+  color: black;
   outline: none;
-
+  flex-shrink: 0;
 }
 
 .edit-Btn:hover {
@@ -122,8 +161,12 @@ li.completed .text {
 .del-Btn:hover {
   background: #ffeaea;
 }
-.todo:hover{
- transform: scale(1.02);
+
+.edit-Btn:focus,
+.del-Btn:focus,
+.add-Btn:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 @media (max-width: 768px) {
@@ -137,11 +180,11 @@ li.completed .text {
   }
 }
 
+
 @media (max-width: 480px) {
   body {
     padding: 15px;
     align-items: flex-start;
-    padding-top: 30px;
   }
 
   .todo {
@@ -153,34 +196,28 @@ li.completed .text {
     font-size: 22px;
   }
 
-  input[type="text"] {
+  textarea,
+  .edit-textarea {
+    min-height: 70px;
     font-size: 14px;
-    padding: 8px 12px;
   }
+
   .add-Btn {
     font-size: 14px;
     padding: 9px;
   }
+
   li {
     padding: 8px 10px;
     gap: 8px;
   }
+
   .text {
     font-size: 14px;
   }
+
   .edit-Btn,
   .del-Btn {
     font-size: 13px;
   }
-}
-.edit-Btn,
-.del-Btn,
-.add-Btn {
-  outline: none;
-}
-.edit-Btn:focus,
-.del-Btn:focus,
-.add-Btn:focus {
-  outline: none;
-  box-shadow: none;
 }
