@@ -3,7 +3,7 @@ export default function ToDoForm(props){
 	return(
 		<>
 			<div>
-				<input type="text" placeholder="Enter the Task" value={props.newTask} onChange={props.handleInputChange} onKeyDown={props.handleKeyDown} />
+				<textarea type="text" placeholder="Enter the Task" value={props.newTask} onChange={props.handleInputChange} onKeyDown={props.handleKeyDown} />
 			</div>
 			<button className="add-Btn" onClick={props.addTask}>
 				Add
