@@ -77,7 +77,7 @@ textarea:focus {
 }
 
 /* Add Button */
-.add-Btn {
+.add-btn {
   width: 100%;
   padding: 10px;
   background: #1e0bb1;
@@ -92,7 +92,7 @@ textarea:focus {
   outline: none;
 }
 
-.add-Btn:hover {
+.add-btn:hover {
   background: #5c4ae4;
 }
 
@@ -148,8 +148,8 @@ li.completed .text {
   align-self: flex-end;
 }
 
-.save-Btn,
-.cancel-Btn {
+.save-btn,
+.cancel-btn {
   border: none;
   cursor: pointer;
   font-size: 13px;
@@ -159,28 +159,28 @@ li.completed .text {
   outline: none;
 }
 
-.save-Btn {
+.save-btn {
   background: #6c5ce7;
   color: white;
 }
 
-.save-Btn:hover {
+.save-btn:hover {
   background: #5a4bd1;
 }
 
-.cancel-Btn {
+.cancel-btn {
   background: transparent;
   color: #636e72;
   border: 1px solid #dcdde1;
 }
 
-.cancel-Btn:hover {
+.cancel-btn:hover {
   background: #f1f2f6;
 }
 
 /* Buttons */
-.edit-Btn,
-.del-Btn {
+.edit-btn,
+.del-btn {
   border: none;
   background: transparent;
   cursor: pointer;
@@ -193,19 +193,19 @@ li.completed .text {
   flex-shrink: 0;
 }
 
-.edit-Btn:hover {
+.edit-btn:hover {
   background: #eaf7ff;
 }
 
-.del-Btn:hover {
+.del-btn:hover {
   background: #ffeaea;
 }
 
-.edit-Btn:focus,
-.del-Btn:focus,
-.add-Btn:focus,
-.save-Btn:focus,
-.cancel-Btn:focus {
+.edit-btn:focus,
+.del-btn:focus,
+.add-btn:focus,
+.save-btn:focus,
+.cancel-btn:focus {
   outline: none;
   box-shadow: none;
 }
@@ -242,7 +242,7 @@ li.completed .text {
     font-size: 14px;
   }
 
-  .add-Btn {
+  .add-btn {
     font-size: 14px;
     padding: 9px;
   }
@@ -256,8 +256,8 @@ li.completed .text {
     font-size: 14px;
   }
 
-  .edit-Btn,
-  .del-Btn {
+  .edit-btn,
+  .del-btn {
     font-size: 13px;
   }
 }

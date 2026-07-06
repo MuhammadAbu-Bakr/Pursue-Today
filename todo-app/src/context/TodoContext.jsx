@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { useState } from "react";
+import { TodoContext } from "./todo-context.js";
 
-const TodoContext = createContext();
 export function TodoProvider({ children }) {
   const [tasks, setTasks] = useState([
     { id: 1, text: "Learn React", completed: false },
@@ -9,20 +9,20 @@ export function TodoProvider({ children }) {
   const [newTask, setNewTask] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
+
   function handleInputChange(event) {
     setNewTask(event.target.value);
   }
   function handleKeyDown(event) {
     if (event.key === "Enter") {
+      event.preventDefault();
       addTask();
     }
   }
   function toggleTask(id) {
     setTasks(tasks =>
       tasks.map(task =>
-        task.id === id
-          ? { ...task, completed: !task.completed }
-          : task
+        task.id === id ? { ...task, completed: !task.completed } : task
       )
     );
   }
@@ -34,13 +34,8 @@ export function TodoProvider({ children }) {
     }
     setTasks(tasks => [
       ...tasks,
-      {
-        id: Date.now(),
-        text: trimmed,
-        completed: false,
-      },
+      { id: Date.now(), text: trimmed, completed: false },
     ]);
-
     setNewTask("");
   }
   function delTask(id) {
@@ -48,7 +43,7 @@ export function TodoProvider({ children }) {
       "⚠️ Are you sure you want to delete this task?"
     );
     if (!confirmed) return;
-      setTasks(tasks => tasks.filter(task => task.id !== id));
+    setTasks(tasks => tasks.filter(task => task.id !== id));
   }
   function startEdit(task) {
     setEditingId(task.id);
@@ -69,14 +64,13 @@ export function TodoProvider({ children }) {
     }
     setTasks(tasks =>
       tasks.map(task =>
-        task.id === id
-          ? { ...task, text: trimmed }
-          : task
+        task.id === id ? { ...task, text: trimmed } : task
       )
     );
     setEditingId(null);
     setEditText("");
   }
+
   return (
     <TodoContext.Provider
       value={{
@@ -98,7 +92,4 @@ export function TodoProvider({ children }) {
       {children}
     </TodoContext.Provider>
   );
-}
-export function useTodo() {
-  return useContext(TodoContext);
 }

@@ -1,5 +1,5 @@
 import "../App.css";
-import { useTodo } from "../context/TodoContext";
+import { useTodo } from "../context/todo-context.js";
 
 export default function TodoItem() {
   const {
@@ -29,10 +29,10 @@ export default function TodoItem() {
                 autoFocus
               />
               <div className="edit-actions">
-                <button className="cancel-Btn" onClick={cancelEdit} >
+                <button className="cancel-btn" onClick={cancelEdit} >
                   Cancel
                 </button>
-                <button className="save-Btn" onClick={() => saveEdit(task.id)} >
+                <button className="save-btn" onClick={() => saveEdit(task.id)} >
                   Save
                 </button>
               </div>
@@ -50,14 +50,14 @@ export default function TodoItem() {
               </span>
 
               <button
-                className="edit-Btn"
+                className="edit-btn"
                 onClick={() => startEdit(task)}
               >
                 Edit ✏️
               </button>
 
               <button
-                className="del-Btn"
+                className="del-btn"
                 onClick={() => delTask(task.id)}
               >
                 Delete 🗑️

@@ -1,5 +1,5 @@
 import "../App.css";
-import { useTodo } from "../context/TodoContext";
+import { useTodo } from "../context/todo-context.js";
 
 export default function ToDoForm() {
   const {
@@ -18,7 +18,7 @@ export default function ToDoForm() {
           onKeyDown={handleKeyDown}
         />
       </div>
-      <button className="add-Btn" onClick={addTask}>
+      <button className="add-btn" onClick={addTask}>
         Add
       </button>
     </>
