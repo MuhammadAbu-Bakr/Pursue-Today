@@ -44,7 +44,11 @@ export function TodoProvider({ children }) {
     setNewTask("");
   }
   function delTask(id) {
-    setTasks(tasks => tasks.filter(task => task.id !== id));
+    const confirmed = window.confirm(
+      "⚠️ Are you sure you want to delete this task?"
+    );
+    if (!confirmed) return;
+      setTasks(tasks => tasks.filter(task => task.id !== id));
   }
   function startEdit(task) {
     setEditingId(task.id);
