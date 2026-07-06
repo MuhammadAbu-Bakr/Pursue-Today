@@ -35,9 +35,25 @@ function Todolist(){
 		
 	}
 	
-	function editTask (id){
-		
-	}
+	function editTask(id) {
+    const taskToEdit = tasks.find(task => task.id === id);
+
+    const updatedText = prompt(
+        "Edit your task (you can use multiple lines):",
+        taskToEdit.text
+    );
+
+    if (updatedText !== null && updatedText.trim() !== "") {
+        setTasks(t =>
+			t.map(task =>
+            task.id === id
+                ? { ...task, text: updatedText }
+                  : task
+            )
+        );
+        alert("Task updated successfully");
+    }
+}
 	return(
 	<div className="todo">
 		<h1 className="head">To-Do-List</h1>
