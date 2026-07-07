@@ -76,7 +76,6 @@ textarea:focus {
   line-height: 1.5;
 }
 
-/* Add Button */
 .add-btn {
   width: 100%;
   padding: 10px;
@@ -177,8 +176,6 @@ li.completed .text {
 .cancel-btn:hover {
   background: #f1f2f6;
 }
-
-/* Buttons */
 .edit-btn,
 .del-btn {
   border: none;
@@ -201,13 +198,13 @@ li.completed .text {
   background: #ffeaea;
 }
 
-.edit-btn:focus,
-.del-btn:focus,
-.add-btn:focus,
-.save-btn:focus,
-.cancel-btn:focus {
-  outline: none;
-  box-shadow: none;
+.edit-btn:focus-visible,
+.del-btn:focus-visible,
+.add-btn:focus-visible,
+.save-btn:focus-visible,
+.cancel-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
 }
 
 @media (max-width: 768px) {

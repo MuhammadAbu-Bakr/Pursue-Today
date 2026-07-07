@@ -22,7 +22,8 @@ export default function TodoItem() {
         >
           {editingId === task.id ? (
             <div className="edit-wrapper">
-              <textarea
+             <textarea
+                aria-label="Edit task"
                 className="edit-textarea"
                 value={editText}
                 onChange={handleEditChange}
@@ -41,6 +42,7 @@ export default function TodoItem() {
             <>
               <input
                 type="checkbox"
+                aria-label={`Mark "${task.text}" as completed`}
                 checked={task.completed}
                 onChange={() => toggleTask(task.id)}
               />

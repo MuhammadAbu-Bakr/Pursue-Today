@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TodoContext } from "./todo-context.js";
 
 export function TodoProvider({ children }) {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: "Learn React", completed: false },
-    { id: 2, text: "Read Book", completed: false },
-  ]);
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem("tasks");
+      return saved
+        ? JSON.parse(saved)
+        : [
+        { id: 1, text: "Learn React", completed: false },
+        { id: 2, text: "Read Book", completed: false },
+      ];
+      });
   const [newTask, setNewTask] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
+  
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
 
   function handleInputChange(event) {
     setNewTask(event.target.value);
@@ -39,10 +49,10 @@ export function TodoProvider({ children }) {
     setNewTask("");
   }
   function delTask(id) {
-    const confirmed = window.confirm(
-      "⚠️ Are you sure you want to delete this task?"
-    );
-    if (!confirmed) return;
+    // const confirmed = window.confirm(
+    //   "⚠️ Are you sure you want to delete this task?"
+    // );
+    // if (!confirmed) return;
     setTasks(tasks => tasks.filter(task => task.id !== id));
   }
   function startEdit(task) {
