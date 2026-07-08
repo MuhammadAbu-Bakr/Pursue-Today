@@ -1,5 +1,6 @@
-import "../App.css";
-import { useTodo } from "../context/todo-context.js";
+import { Paper, TextField, Button, Stack } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { useTodo } from "../context/todo-context.jsx";
 
 export default function TodoForm() {
   const {
@@ -13,21 +14,46 @@ export default function TodoForm() {
     e.preventDefault();
     addTask();
   }
-  
 
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea
-        aria-label="Enter a new task"
-        placeholder="Enter the Task"
-        value={newTask}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-      />
+    <Paper
+      elevation={3}
+      sx={{
+        p: 3,
+        mb: 3,
+        borderRadius: 3,
+      }}
+    >
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={2}>
+          <TextField
+            label="New Task"
+            placeholder="Enter your task..."
+            multiline
+            minRows={3}
+            fullWidth
+            value={newTask}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            variant="outlined"
+          />
 
-      <button className="add-btn" type="submit">
-        Add
-      </button>
-    </form>
+          <Button
+            type="submit"
+            variant="contained"
+            startIcon={<AddIcon />}
+            size="large"
+            sx={{
+              alignSelf: "flex-end",
+              borderRadius: 2,
+              textTransform: "none",
+              px: 3,
+            }}
+          >
+            Add Task
+          </Button>
+        </Stack>
+      </form>
+    </Paper>
   );
 }

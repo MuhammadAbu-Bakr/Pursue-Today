@@ -24,5 +24,8 @@ export default defineConfig([
     languageOptions: {
       globals: globals.node,
     },
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
   },
 ])

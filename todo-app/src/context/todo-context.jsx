@@ -1,14 +1,9 @@
-import {
-  createContext,
-  createElement,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useEffect, useState } from "react";
 
 const API_URL = "https://pursue-today-api.onrender.com/api/todos";
 
-export const TodoContext = createContext();
+const TodoContext = createContext();
 
 async function requestTodos(url, options) {
   const response = await fetch(url, options);
@@ -78,7 +73,7 @@ export function TodoProvider({ children }) {
       alert("Write a task before submission");
       return;
     }
-    
+
     try {
       setError("");
       const createdTask = await requestTodos(API_URL, {
@@ -96,12 +91,11 @@ export function TodoProvider({ children }) {
     }
   }
 
+  // The window.confirm() prompt has been removed. Confirmation is now
+  // handled by the AlertDialog component in the UI — this function should
+  // be called from an <AlertDialogAction onClick={() => delTask(task._id)}>,
+  // so by the time delTask runs, the user has already confirmed via the dialog.
   async function delTask(id) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this task?"
-    );
-    if (!confirmed) return;
-
     try {
       setError("");
       await requestTodos(`${API_URL}/${id}`, {
@@ -155,10 +149,9 @@ export function TodoProvider({ children }) {
     }
   }
 
-  return createElement(
-    TodoContext.Provider,
-    {
-      value: {
+  return (
+    <TodoContext.Provider
+      value={{
         tasks,
         newTask,
         editingId,
@@ -174,17 +167,19 @@ export function TodoProvider({ children }) {
         handleEditChange,
         cancelEdit,
         saveEdit,
-      },
-    },
-    children
+      }}
+    >
+      {children}
+    </TodoContext.Provider>
   );
 }
 
 export function useTodo() {
   const context = useContext(TodoContext);
+
   if (!context) {
     throw new Error("useTodo must be within a TodoProvider");
   }
+
   return context;
 }
-

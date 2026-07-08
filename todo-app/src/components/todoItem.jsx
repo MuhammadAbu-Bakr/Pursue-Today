@@ -1,7 +1,32 @@
-import "../App.css";
-import { useTodo } from "../context/todo-context.js";
+import { useState } from "react";
+import {
+  Box,
+  Card,
+  CardContent,
+  Checkbox,
+  Typography,
+  IconButton,
+  TextField,
+  Button,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
+
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
+import CloseIcon from "@mui/icons-material/Close";
+
+
+
+import { useTodo } from "../context/todo-context.jsx";
 
 export default function TodoItem() {
+  const [deleteId, setDeleteId] = useState(null);
   const {
     tasks,
     editingId,
@@ -17,72 +42,144 @@ export default function TodoItem() {
   } = useTodo();
 
   if (loading) {
-    return <p className="status-message">Loading tasks...</p>;
+    return (
+      <Typography textAlign="center" sx={{ mt: 2 }}>
+        Loading tasks...
+      </Typography>
+    );
   }
 
   if (error) {
-    return <p className="status-message error-message">{error}</p>;
+    return (
+      <Typography color="error" textAlign="center" sx={{ mt: 2 }}>
+        {error}
+      </Typography>
+    );
   }
 
   if (tasks.length === 0) {
-    return <p className="status-message">No tasks yet.</p>;
+    return (
+      <Typography textAlign="center" sx={{ mt: 2 }}>
+        No tasks yet.
+      </Typography>
+    );
   }
 
   return (
-    <ol>
+    <Stack spacing={2}>
       {tasks.map((task) => (
-        <li
+        <Card
           key={task._id}
-          className={task.completed ? "completed" : ""}
+          elevation={3}
+          sx={{
+            borderRadius: 3,
+          }}
         >
-          {editingId === task._id ? (
-            <div className="edit-wrapper">
-             <textarea
-                aria-label="Edit task"
-                className="edit-textarea"
-                value={editText}
-                onChange={handleEditChange}
-                autoFocus
-              />
-              <div className="edit-actions">
-                <button className="cancel-btn" onClick={cancelEdit} >
-                  Cancel
-                </button>
-                <button className="save-btn" onClick={() => saveEdit(task._id)} >
-                  Save
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <input
-                type="checkbox"
-                aria-label={`Mark "${task.text}" as completed`}
-                checked={task.completed}
-                onChange={() => toggleTask(task._id)}
-              />
+          <CardContent>
+            {editingId === task._id ? (
+              <Stack spacing={2}>
+                <TextField
+                  multiline
+                  minRows={3}
+                  fullWidth
+                  label="Edit Task"
+                  value={editText}
+                  onChange={handleEditChange}
+                  autoFocus
+                />
 
-              <span className="text">
-                {task.text}
-              </span>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 1,
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    startIcon={<CloseIcon />}
+                    onClick={cancelEdit}
+                  >
+                    Cancel
+                  </Button>
 
-              <button
-                className="edit-btn"
-                onClick={() => startEdit(task)}
+                  <Button
+                    variant="contained"
+                    startIcon={<SaveIcon />}
+                    onClick={() => saveEdit(task._id)}
+                  >
+                    Save
+                  </Button>
+                </Box>
+              </Stack>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
               >
-                Edit ✏️
-              </button>
+                <Checkbox
+                  checked={task.completed}
+                  onChange={() => toggleTask(task._id)}
+                />
 
-              <button
-                className="del-btn"
-                onClick={() => delTask(task._id)}
-              >
-                Delete 🗑️
-              </button>
-            </>
-          )}
-        </li>
+                <Typography
+                  sx={{
+                    flexGrow: 1,
+                    wordBreak: "break-word",
+                    textDecoration: task.completed
+                      ? "line-through"
+                      : "none",
+                    color: task.completed
+                      ? "text.secondary"
+                      : "text.primary",
+                  }}
+                >
+                  {task.text}
+                </Typography>
+
+                <IconButton
+                  color="primary"
+                  onClick={() => startEdit(task)}
+                >
+                  <EditIcon />
+                </IconButton>
+
+                <IconButton color="error" onClick={() => setDeleteId(task._id)}>
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            )}
+          </CardContent>
+        </Card>
       ))}
-    </ol>
+
+      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
+        <DialogTitle>Delete this task?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This action can&apos;t be undone. The task will be permanently removed.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteId(null)} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              delTask(deleteId);
+              setDeleteId(null);
+            }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Stack>
   );
 }
