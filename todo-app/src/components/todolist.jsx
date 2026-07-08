@@ -1,6 +1,6 @@
 import "../App.css";
-import TodoForm from "./TodoForm";
-import TodoItem from "./TodoItem";
+import TodoForm from "./todoForm.jsx";
+import TodoItem from "./todoItem.jsx";
 function Todolist() {
   return (
     <div className="todo">
