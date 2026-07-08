@@ -6,6 +6,8 @@ export default function TodoItem() {
     tasks,
     editingId,
     editText,
+    loading,
+    error,
     toggleTask,
     delTask,
     startEdit,
@@ -13,6 +15,19 @@ export default function TodoItem() {
     cancelEdit,
     saveEdit,
   } = useTodo();
+
+  if (loading) {
+    return <p className="status-message">Loading tasks...</p>;
+  }
+
+  if (error) {
+    return <p className="status-message error-message">{error}</p>;
+  }
+
+  if (tasks.length === 0) {
+    return <p className="status-message">No tasks yet.</p>;
+  }
+
   return (
     <ol>
       {tasks.map((task) => (

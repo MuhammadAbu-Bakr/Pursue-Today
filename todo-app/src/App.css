@@ -102,6 +102,17 @@ ol {
   gap: 10px;
 }
 
+.status-message {
+  color: #636e72;
+  font-size: 15px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.error-message {
+  color: #b91c1c;
+}
+
 li {
   display: flex;
   align-items: center;
