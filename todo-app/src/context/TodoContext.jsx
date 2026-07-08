@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { TodoContext } from "./todo-context.js";
 
-const API_URL = "http://localhost:5000/api/todos";
+const API_URL = "https://pursue-today-api.onrender.com";
 
 export function TodoProvider({ children }) {
   const [tasks, setTasks] = useState([]);
