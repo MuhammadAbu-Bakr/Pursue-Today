@@ -1,4 +1,4 @@
-import Todolist from './components/todolist.jsx'
+import Todolist from './components/TodoList.jsx'
 
 function App(){
 	return(<>

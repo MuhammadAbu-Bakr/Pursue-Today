@@ -17,10 +17,10 @@ export default function TodoItem() {
     <ol>
       {tasks.map((task) => (
         <li
-          key={task.id}
+          key={task._id}
           className={task.completed ? "completed" : ""}
         >
-          {editingId === task.id ? (
+          {editingId === task._id ? (
             <div className="edit-wrapper">
              <textarea
                 aria-label="Edit task"
@@ -33,7 +33,7 @@ export default function TodoItem() {
                 <button className="cancel-btn" onClick={cancelEdit} >
                   Cancel
                 </button>
-                <button className="save-btn" onClick={() => saveEdit(task.id)} >
+                <button className="save-btn" onClick={() => saveEdit(task._id)} >
                   Save
                 </button>
               </div>
@@ -44,7 +44,7 @@ export default function TodoItem() {
                 type="checkbox"
                 aria-label={`Mark "${task.text}" as completed`}
                 checked={task.completed}
-                onChange={() => toggleTask(task.id)}
+                onChange={() => toggleTask(task._id)}
               />
 
               <span className="text">
@@ -60,7 +60,7 @@ export default function TodoItem() {
 
               <button
                 className="del-btn"
-                onClick={() => delTask(task.id)}
+                onClick={() => delTask(task._id)}
               >
                 Delete 🗑️
               </button>

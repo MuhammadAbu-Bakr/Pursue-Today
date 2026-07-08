@@ -1,23 +1,23 @@
 import { useState, useEffect } from "react";
 import { TodoContext } from "./todo-context.js";
 
+const API_URL = "http://localhost:5000/api/todos";
+
 export function TodoProvider({ children }) {
-  const [tasks, setTasks] = useState(() => {
-    const saved = localStorage.getItem("tasks");
-      return saved
-        ? JSON.parse(saved)
-        : [
-        { id: 1, text: "Learn React", completed: false },
-        { id: 2, text: "Read Book", completed: false },
-      ];
-      });
+  const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
   
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+    async function fetchTasks() {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      setTasks(data);
+    }
+
+    fetchTasks();
+  }, []);
 
 
   function handleInputChange(event) {
@@ -29,34 +29,47 @@ export function TodoProvider({ children }) {
       addTask();
     }
   }
-  function toggleTask(id) {
+  async function toggleTask(id) {
+    const response = await fetch(`${API_URL}/${id}/toggle`, {
+      method: "PATCH",
+    });
+    const updatedTask = await response.json();
+
     setTasks(tasks =>
-      tasks.map(task =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
+      tasks.map(task => (task._id === id ? updatedTask : task))
     );
   }
-  function addTask() {
+  async function addTask() {
     const trimmed = newTask.trim();
     if (!trimmed) {
       alert("Write a task before submission");
       return;
     }
-    setTasks(tasks => [
-      ...tasks,
-      { id: Date.now(), text: trimmed, completed: false },
-    ]);
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: trimmed }),
+    });
+    const createdTask = await response.json();
+
+    setTasks(tasks => [createdTask, ...tasks]);
     setNewTask("");
   }
-  function delTask(id) {
+  async function delTask(id) {
     // const confirmed = window.confirm(
     //   "⚠️ Are you sure you want to delete this task?"
     // );
     // if (!confirmed) return;
-    setTasks(tasks => tasks.filter(task => task.id !== id));
+    await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+    });
+
+    setTasks(tasks => tasks.filter(task => task._id !== id));
   }
   function startEdit(task) {
-    setEditingId(task.id);
+    setEditingId(task._id);
     setEditText(task.text);
   }
   function handleEditChange(event) {
@@ -66,16 +79,23 @@ export function TodoProvider({ children }) {
     setEditingId(null);
     setEditText("");
   }
-  function saveEdit(id) {
+  async function saveEdit(id) {
     const trimmed = editText.trim();
     if (!trimmed) {
       alert("Task can't be empty");
       return;
     }
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: trimmed }),
+    });
+    const updatedTask = await response.json();
+
     setTasks(tasks =>
-      tasks.map(task =>
-        task.id === id ? { ...task, text: trimmed } : task
-      )
+      tasks.map(task => (task._id === id ? updatedTask : task))
     );
     setEditingId(null);
     setEditText("");
