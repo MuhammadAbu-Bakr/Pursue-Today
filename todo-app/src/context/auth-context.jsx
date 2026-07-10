@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 const API_BASE = "https://pursue-today-api.onrender.com/api"; 
-// "https://pursue-today-api.onrender.com/api"
+// "https://pursue-today-api.onrender.com"
 // "http://localhost:5000/api"
 
 async function request(url, options = {}) {
