@@ -1,5 +1,6 @@
 import TodoForm from "./todoForm.jsx";
 import TodoItem from "./todoItem.jsx";
+import AccountBar from "./auth/AccountBar.jsx";
 
 import {
   Container,
@@ -18,6 +19,8 @@ function Todolist() {
           borderRadius: 4,
         }}
       >
+        <AccountBar />
+
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Typography
             variant="h3"

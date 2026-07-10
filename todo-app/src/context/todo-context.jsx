@@ -1,12 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth, API_BASE } from "./auth-context.jsx";
 
-const API_URL = "https://pursue-today-api.onrender.com/api/todos";
+const API_URL = `${API_BASE}/todos`;
 
 const TodoContext = createContext();
 
-async function requestTodos(url, options) {
-  const response = await fetch(url, options);
+async function requestTodos(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "include", 
+    ...options,
+  });
   const data = await response.json();
 
   if (!response.ok) {
@@ -17,6 +22,7 @@ async function requestTodos(url, options) {
 }
 
 export function TodoProvider({ children }) {
+  const { user } = useAuth(); 
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -25,6 +31,12 @@ export function TodoProvider({ children }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!user) {
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
+
     async function fetchTasks() {
       try {
         setLoading(true);
@@ -39,7 +51,7 @@ export function TodoProvider({ children }) {
     }
 
     fetchTasks();
-  }, []);
+  }, [user]);
 
   function handleInputChange(event) {
     setNewTask(event.target.value);
@@ -90,11 +102,6 @@ export function TodoProvider({ children }) {
       setError(err.message);
     }
   }
-
-  // The window.confirm() prompt has been removed. Confirmation is now
-  // handled by the AlertDialog component in the UI — this function should
-  // be called from an <AlertDialogAction onClick={() => delTask(task._id)}>,
-  // so by the time delTask runs, the user has already confirmed via the dialog.
   async function delTask(id) {
     try {
       setError("");
