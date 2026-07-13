@@ -1,0 +1,20 @@
+ID,Module / File,Function,Test Case,Expected Result,Status,Notes
+UT-01,utils/storage.js,getTodoSize(),Plain ASCII text,Returns correct byte count,,
+UT-02,utils/storage.js,getTodoSize(),Multi-byte text (emoji/unicode),"Uses Buffer.byteLength, not .length, so size is accurate",,
+UT-03,utils/storage.js,getTodoSize(),Empty string text,Returns small non-zero size (completed flag still counted),,
+UT-04,utils/storage.js,assertWithinQuota(),New content pushes user over MAX_STORAGE_BYTES,Throws an error with status = 413,,Mock User.findById
+UT-05,utils/storage.js,assertWithinQuota(),New content keeps user under the cap,Does not throw,,Mock User.findById
+UT-06,utils/storage.js,assertWithinQuota(),Editing a todo (previousSize passed in) to be smaller,Does not falsely trigger the cap,,previousSize must be subtracted first
+UT-07,utils/storage.js,adjustUsage(),Positive delta (todo created/grown),Calls User.findByIdAndUpdate with correct $inc value,,
+UT-08,utils/storage.js,adjustUsage(),Negative delta (todo deleted/shrunk),"Usage decreases correctly, never goes below 0 conceptually",,
+UT-09,models/User.js,pre('save') hook,Password field is modified,Password gets hashed before save,,
+UT-10,models/User.js,pre('save') hook,Password field is NOT modified (e.g. only email changed),Password is not re-hashed,,isModified('password') check
+UT-11,models/User.js,comparePassword(),Correct password provided,Returns true,,
+UT-12,models/User.js,comparePassword(),Incorrect password provided,Returns false,,
+UT-13,models/User.js,createVerificationToken(),Token generation,Raw token returned differs from the stored value (stored value is the SHA-256 hash),,
+UT-14,models/User.js,createVerificationToken(),Expiry is set,verificationTokenExpires is ~24h in the future,,
+UT-15,middleware/auth.js,requireAuth(),Valid JWT + verified user found,Calls next(),,Mock jwt.verify and User.findById
+UT-16,middleware/auth.js,requireAuth(),No token present,Returns 401,,
+UT-17,middleware/auth.js,requireAuth(),jwt.verify throws (expired/invalid token),Returns 401,,
+UT-18,middleware/auth.js,requireAuth(),Decoded user no longer exists in DB,Returns 401,,
+UT-19,middleware/auth.js,requireAuth(),User exists but isVerified is false,Returns 403,,
