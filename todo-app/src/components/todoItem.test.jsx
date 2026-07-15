@@ -40,11 +40,11 @@ describe('TodoItem', () => {
     });
     render(<TodoItem />);
     
-    // Click delete icon
+  
     const deleteButton = screen.getByTestId('DeleteIcon');
     fireEvent.click(deleteButton.parentElement);
 
-    // Confirm dialog
+
     const confirmButton = screen.getByRole('button', { name: /delete/i });
     fireEvent.click(confirmButton);
     

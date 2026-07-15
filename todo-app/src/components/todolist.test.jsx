@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import Todolist from './todolist';
 
-// Mock child components to isolate Todolist testing
+
 vi.mock('./todoForm.jsx', () => ({
   default: () => <div data-testid="todo-form" />
 }));

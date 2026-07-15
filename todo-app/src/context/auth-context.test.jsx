@@ -28,7 +28,7 @@ describe('AuthContext', () => {
   });
 
   it('provides auth state and handles login/logout', async () => {
-    // Mock initial session fetch
+    
     global.fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ user: null })
@@ -40,15 +40,14 @@ describe('AuthContext', () => {
       </AuthProvider>
     );
 
-    // Initial state
+    
     expect(screen.getByText('Loading...')).toBeInTheDocument();
 
-    // After session loads
+  
     await waitFor(() => {
       expect(screen.getByText('Not logged in')).toBeInTheDocument();
     });
 
-    // Mock login response
     global.fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ user: { name: 'Test User' } })

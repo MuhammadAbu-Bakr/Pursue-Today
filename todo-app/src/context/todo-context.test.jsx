@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TodoProvider, useTodo } from './todo-context';
 import * as AuthContext from './auth-context';
 
-// Test component to access context
+
 const TestComponent = () => {
   const { tasks, loading, addTask, handleInputChange } = useTodo();
   
@@ -26,7 +26,7 @@ const TestComponent = () => {
 describe('TodoContext', () => {
   beforeEach(() => {
     global.fetch = vi.fn();
-    // Mock user being logged in
+    
     vi.spyOn(AuthContext, 'useAuth').mockReturnValue({
       user: { name: 'Test User' }
     });
