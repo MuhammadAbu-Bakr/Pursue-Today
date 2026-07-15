@@ -1,6 +1,6 @@
 const User = require("../models/User");
 
-const MAX_STORAGE_BYTES = Number(process.env.MAX_STORAGE_BYTES) || 30 * 1024 * 1024; // 30MB default
+const MAX_STORAGE_BYTES = Number(process.env.MAX_STORAGE_BYTES) || 5 * 1024 * 1024; // 30MB default
 
 
 function getTodoSize({ text = "", completed = false }) {
