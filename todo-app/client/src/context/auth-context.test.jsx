@@ -53,24 +53,23 @@ describe('AuthContext', () => {
       json: async () => ({ user: { name: 'Test User' } })
     });
 
-    // Trigger login
+    
     screen.getByText('Login').click();
 
-    // Verify login state
+
     await waitFor(() => {
       expect(screen.getByText('Logged in as Test User')).toBeInTheDocument();
     });
 
-    // Mock logout response
     global.fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({})
     });
 
-    // Trigger logout
+    
     screen.getByText('Logout').click();
 
-    // Verify logout state
+    
     await waitFor(() => {
       expect(screen.getByText('Not logged in')).toBeInTheDocument();
     });
