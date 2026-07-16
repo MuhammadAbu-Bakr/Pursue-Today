@@ -1,6 +1,6 @@
 const User = require("../models/User");
 
-const MAX_STORAGE_BYTES = Number(process.env.MAX_STORAGE_BYTES) || 5 * 1024 * 1024; // 30MB default
+const DEFAULT_MAX_STORAGE_BYTES = 30 * 1024 * 1024;
 
 
 function getTodoSize({ text = "", completed = false }) {
@@ -9,6 +9,7 @@ function getTodoSize({ text = "", completed = false }) {
 
 
 async function assertWithinQuota(userId, newContent, previousSize = 0) {
+  const MAX_STORAGE_BYTES = Number(process.env.MAX_STORAGE_BYTES) || DEFAULT_MAX_STORAGE_BYTES;
   const user = await User.findById(userId).select("dataUsageBytes");
   const newSize = getTodoSize(newContent);
   const projectedUsage = user.dataUsageBytes - previousSize + newSize;
@@ -40,7 +41,7 @@ async function recalculateUsage(userId) {
 }
 
 module.exports = {
-  MAX_STORAGE_BYTES,
+  MAX_STORAGE_BYTES: DEFAULT_MAX_STORAGE_BYTES,
   getTodoSize,
   assertWithinQuota,
   adjustUsage,
