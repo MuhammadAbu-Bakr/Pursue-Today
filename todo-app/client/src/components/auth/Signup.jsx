@@ -20,10 +20,10 @@ export default function Signup() {
     setSubmitting(true);
     try {
       const data = await signup(name, email, password);
-      setMessage(data.message); // "check your inbox to verify"
+      setMessage(data.message);
       setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+        navigate("/");
+      }, 1000);
     } catch (err) {
       setError(err.message);
     } finally {

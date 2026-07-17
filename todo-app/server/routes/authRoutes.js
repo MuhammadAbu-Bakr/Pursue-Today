@@ -45,8 +45,12 @@ router.post("/signup", async (req, res) => {
 
     // await sendVerificationEmail(user.email, rawToken);
 
+    const token = signToken(user._id);
+    setAuthCookie(res, token);
+
     res.status(201).json({
-      message: "Account created successfully. You can now log in.",
+      message: "Account created successfully.",
+      user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -40,10 +40,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function signup(name, email, password) {
-    return request(`${API_BASE}/auth/signup`, {
+    const data = await request(`${API_BASE}/auth/signup`, {
       method: "POST",
       body: JSON.stringify({ name, email, password }),
     });
+    if (data.user) {
+      setUser(data.user);
+    }
+    return data;
   }
 
   async function login(email, password) {
