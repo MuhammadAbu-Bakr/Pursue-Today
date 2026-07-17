@@ -23,7 +23,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 
 
-import { useTodo } from "../context/todo-context.jsx";
+import { useTodo } from "../../context/todo-context.jsx";
 
 export default function TodoItem() {
   const [deleteId, setDeleteId] = useState(null);

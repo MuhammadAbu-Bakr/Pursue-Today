@@ -1,6 +1,6 @@
 import TodoForm from "./todoForm.jsx";
 import TodoItem from "./todoItem.jsx";
-import AccountBar from "./auth/AccountBar.jsx";
+import AccountBar from "../auth/AccountBar.jsx";
 
 import {
   Container,

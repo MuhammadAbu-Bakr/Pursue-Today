@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Todolist from './components/todolist.jsx'
+import Todolist from './components/todos/todolist.jsx'
 import Login from "./components/auth/Login.jsx";
 import Signup from "./components/auth/Signup.jsx";
 import VerifyEmail from "./components/auth/VerifyEmail.jsx";

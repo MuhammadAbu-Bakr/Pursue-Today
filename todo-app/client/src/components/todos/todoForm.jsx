@@ -1,6 +1,6 @@
 import { Paper, TextField, Button, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useTodo } from "../context/todo-context.jsx";
+import { useTodo } from "../../context/todo-context.jsx";
 
 export default function TodoForm() {
   const {

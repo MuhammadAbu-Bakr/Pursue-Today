@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Alert, Paper, Link } from "@mui/material";
 import { useAuth } from "../../context/auth-context.jsx";
 
 export default function Signup() {
   const { signup } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +21,9 @@ export default function Signup() {
     try {
       const data = await signup(name, email, password);
       setMessage(data.message); // "check your inbox to verify"
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -29,12 +33,12 @@ export default function Signup() {
 
   return (
     <Box 
-      display="flex" 
-      justifyContent="center" 
-      alignItems="center" 
-      minHeight="100vh"
-      width="100%"
       sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        width: "100%",
         background: 'linear-gradient(135deg, #ece9e6 0%, #ffffff 100%)',
         p: 2
       }}
@@ -59,7 +63,7 @@ export default function Signup() {
         {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
         {message && <Alert severity="success" sx={{ mb: 3 }}>{message}</Alert>}
         
-        <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2.5}>
+        <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column">
           <TextField
             label="Full Name"
             type="text"
@@ -68,6 +72,7 @@ export default function Signup() {
             required
             autoFocus
             fullWidth
+            margin="normal"
             variant="outlined"
           />
           <TextField
@@ -77,6 +82,7 @@ export default function Signup() {
             onChange={(e) => setEmail(e.target.value)}
             required
             fullWidth
+            margin="normal"
             variant="outlined"
           />
           <TextField
@@ -87,6 +93,7 @@ export default function Signup() {
             helperText="At least 8 characters"
             required
             fullWidth
+            margin="normal"
             variant="outlined"
           />
           <Button 
@@ -95,7 +102,8 @@ export default function Signup() {
             size="large"
             disabled={submitting}
             sx={{ 
-              mt: 1, 
+              mt: 2, 
+              mb: 1,
               py: 1.5, 
               fontWeight: 'bold',
               borderRadius: 2,

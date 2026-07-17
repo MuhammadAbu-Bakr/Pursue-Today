@@ -27,12 +27,12 @@ export default function Login() {
 
   return (
     <Box 
-      display="flex" 
-      justifyContent="center" 
-      alignItems="center" 
-      minHeight="100vh"
-      width="100%"
       sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        width: "100%",
         background: 'linear-gradient(135deg, #ece9e6 0%, #ffffff 100%)',
         p: 2
       }}
@@ -56,7 +56,7 @@ export default function Login() {
 
         {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
         
-        <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2.5}>
+        <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column">
           <TextField
             label="Email Address"
             type="email"
@@ -65,6 +65,7 @@ export default function Login() {
             required
             autoFocus
             fullWidth
+            margin="normal"
             variant="outlined"
           />
           <TextField
@@ -74,6 +75,7 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
             fullWidth
+            margin="normal"
             variant="outlined"
           />
           <Button 
@@ -82,7 +84,8 @@ export default function Login() {
             size="large"
             disabled={submitting}
             sx={{ 
-              mt: 1, 
+              mt: 2, 
+              mb: 1,
               py: 1.5, 
               fontWeight: 'bold',
               borderRadius: 2,
