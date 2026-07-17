@@ -29,6 +29,10 @@ export function TodoProvider({ children }) {
   const [editText, setEditText] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [isAdding, setIsAdding] = useState(false);
+  const [togglingId, setTogglingId] = useState(null);
 
   useEffect(() => {
     if (!user) {
@@ -67,6 +71,7 @@ export function TodoProvider({ children }) {
   async function toggleTask(id) {
     try {
       setError("");
+      setTogglingId(id);
       const updatedTask = await requestTodos(`${API_URL}/${id}/toggle`, {
         method: "PATCH",
       });
@@ -76,6 +81,8 @@ export function TodoProvider({ children }) {
       );
     } catch (err) {
       setError(err.message);
+    } finally {
+      setTogglingId(null);
     }
   }
 
@@ -88,6 +95,7 @@ export function TodoProvider({ children }) {
 
     try {
       setError("");
+      setIsAdding(true);
       const createdTask = await requestTodos(API_URL, {
         method: "POST",
         headers: {
@@ -100,6 +108,8 @@ export function TodoProvider({ children }) {
       setNewTask("");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsAdding(false);
     }
   }
   async function delTask(id) {
@@ -156,15 +166,36 @@ export function TodoProvider({ children }) {
     }
   }
 
+  const filteredTasks = tasks.filter(task =>
+    task.text.toLowerCase().includes(searchQuery.toLowerCase())
+  ).sort((a, b) => {
+    if (sortBy === "newest") return 0; // Assuming they are prepended initially
+    if (sortBy === "oldest") return -1; // We can't perfectly do oldest without dates, but let's reverse assuming order is newest first
+    if (sortBy === "completed") return (b.completed ? 1 : 0) - (a.completed ? 1 : 0);
+    if (sortBy === "uncompleted") return (a.completed ? 1 : 0) - (b.completed ? 1 : 0);
+    return 0;
+  });
+  
+  if (sortBy === "oldest") {
+      filteredTasks.reverse();
+  }
+
   return (
     <TodoContext.Provider
       value={{
         tasks,
+        filteredTasks,
         newTask,
         editingId,
         editText,
         loading,
         error,
+        searchQuery,
+        setSearchQuery,
+        sortBy,
+        setSortBy,
+        isAdding,
+        togglingId,
         handleInputChange,
         handleKeyDown,
         toggleTask,

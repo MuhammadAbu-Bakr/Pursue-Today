@@ -1,4 +1,4 @@
-import { Paper, TextField, Button, Stack } from "@mui/material";
+import { Paper, TextField, Button, Stack, CircularProgress } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useTodo } from "../../context/todo-context.jsx";
 
@@ -8,6 +8,7 @@ export default function TodoForm() {
     handleInputChange,
     handleKeyDown,
     addTask,
+    isAdding,
   } = useTodo();
 
   function handleSubmit(e) {
@@ -41,8 +42,9 @@ export default function TodoForm() {
           <Button
             type="submit"
             variant="contained"
-            startIcon={<AddIcon />}
+            startIcon={isAdding ? <CircularProgress size={20} color="inherit" /> : <AddIcon />}
             size="large"
+            disabled={isAdding}
             sx={{
               alignSelf: "flex-end",
               borderRadius: 2,
@@ -50,7 +52,7 @@ export default function TodoForm() {
               px: 3,
             }}
           >
-            Add Task
+            {isAdding ? "Adding..." : "Add Task"}
           </Button>
         </Stack>
       </form>

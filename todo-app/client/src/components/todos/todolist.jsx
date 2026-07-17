@@ -7,9 +7,17 @@ import {
   Paper,
   Typography,
   Box,
+  TextField,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
+import { useTodo } from "../../context/todo-context.jsx";
 
 function Todolist() {
+  const { searchQuery, setSearchQuery, sortBy, setSortBy } = useTodo();
+
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
       <Paper
@@ -40,6 +48,29 @@ function Todolist() {
         </Box>
 
         <TodoForm />
+
+        <Box sx={{ display: 'flex', gap: 2, mb: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
+          <TextField 
+            label="Search Tasks" 
+            variant="outlined" 
+            fullWidth 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <FormControl sx={{ minWidth: { xs: '100%', sm: 200 } }}>
+            <InputLabel>Sort By</InputLabel>
+            <Select
+              value={sortBy}
+              label="Sort By"
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <MenuItem value="newest">Newest First</MenuItem>
+              <MenuItem value="oldest">Oldest First</MenuItem>
+              <MenuItem value="completed">Completed First</MenuItem>
+              <MenuItem value="uncompleted">Uncompleted First</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
         <Box sx={{ mt: 3 }}>
           <TodoItem />

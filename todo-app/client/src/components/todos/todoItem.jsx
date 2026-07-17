@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  CircularProgress,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -29,10 +30,12 @@ export default function TodoItem() {
   const [deleteId, setDeleteId] = useState(null);
   const {
     tasks,
+    filteredTasks,
     editingId,
     editText,
     loading,
     error,
+    togglingId,
     toggleTask,
     delTask,
     startEdit,
@@ -67,7 +70,7 @@ export default function TodoItem() {
 
   return (
     <Stack spacing={2}>
-      {tasks.map((task) => (
+      {filteredTasks.map((task) => (
         <Card
           key={task._id}
           elevation={3}
@@ -121,10 +124,25 @@ export default function TodoItem() {
                   gap: 1,
                 }}
               >
-                <Checkbox
-                  checked={task.completed}
-                  onChange={() => toggleTask(task._id)}
-                />
+                <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <Checkbox
+                    checked={task.completed}
+                    onChange={() => toggleTask(task._id)}
+                    disabled={togglingId === task._id}
+                  />
+                  {togglingId === task._id && (
+                    <CircularProgress 
+                      size={24} 
+                      sx={{ 
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        marginTop: '-12px',
+                        marginLeft: '-12px',
+                      }} 
+                    />
+                  )}
+                </Box>
 
                 <Typography
                   sx={{
