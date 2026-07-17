@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" mt={8}>
+      <Box display="flex" justifyContent="center" alignItems="center" width="100%" minHeight="100vh">
         <CircularProgress />
       </Box>
     );

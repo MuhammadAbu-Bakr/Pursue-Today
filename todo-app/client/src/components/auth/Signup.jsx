@@ -10,20 +10,15 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
-    setMessage("");
     setSubmitting(true);
     try {
-      const data = await signup(name, email, password);
-      setMessage(data.message);
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      await signup(name, email, password);
+      navigate("/");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -61,7 +56,6 @@ export default function Signup() {
         </Typography>
 
         {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-        {message && <Alert severity="success" sx={{ mb: 3 }}>{message}</Alert>}
         
         <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column">
           <TextField
