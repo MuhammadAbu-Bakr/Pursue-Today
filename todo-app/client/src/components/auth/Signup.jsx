@@ -33,6 +33,7 @@ export default function Signup() {
       justifyContent="center" 
       alignItems="center" 
       minHeight="100vh"
+      width="100%"
       sx={{
         background: 'linear-gradient(135deg, #ece9e6 0%, #ffffff 100%)',
         p: 2

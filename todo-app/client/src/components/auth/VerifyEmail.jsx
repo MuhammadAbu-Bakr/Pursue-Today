@@ -28,7 +28,7 @@ export default function VerifyEmail() {
   }, [token, verifyEmail]);
 
   return (
-    <Box display="flex" justifyContent="center" mt={8}>
+    <Box display="flex" justifyContent="center" mt={8} width="100%">
       <Paper sx={{ p: 4, width: 360, textAlign: "center" }} elevation={3}>
         {status === "verifying" && (
           <>
