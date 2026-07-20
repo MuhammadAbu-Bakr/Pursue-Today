@@ -59,6 +59,15 @@ export function AuthProvider({ children }) {
     return data;
   }
 
+  async function loginWithGoogle(credential) {
+    const data = await request(`${API_BASE}/auth/google`, {
+      method: "POST",
+      body: JSON.stringify({ credential }),
+    });
+    setUser(data.user);
+    return data;
+  }
+
   async function logout() {
     await request(`${API_BASE}/auth/logout`, { method: "POST" });
     setUser(null);
@@ -77,7 +86,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signup, login, logout, resendVerification, verifyEmail }}
+      value={{ user, loading, signup, login, loginWithGoogle, logout, resendVerification, verifyEmail }}
     >
       {children}
     </AuthContext.Provider>

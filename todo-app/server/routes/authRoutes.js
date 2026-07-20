@@ -1,9 +1,12 @@
 const express = require("express");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 const User = require("../models/User");
 const { sendVerificationEmail } = require("../utils/sendEmail");
 const requireAuth = require("../middleware/auth");
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const router = express.Router();
 
@@ -118,7 +121,15 @@ router.post("/login", async (req, res) => {
     }
 
     const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
-    if (!user || !(await user.comparePassword(password))) {
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    if (!user.password) {
+      return res.status(401).json({
+        message: "This account uses Google sign-in. Please log in with Google.",
+      });
+    }
+    if (!(await user.comparePassword(password))) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
@@ -136,6 +147,59 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+router.post("/google", async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: "Google credential is required" });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, email_verified: emailVerified } = payload;
+
+    if (!email) {
+      return res.status(400).json({ message: "Google account has no email address" });
+    }
+
+    const normalizedEmail = email.toLowerCase();
+    let user = await User.findOne({ email: normalizedEmail }).select("+googleId");
+
+    if (user) {
+      if (user.googleId && user.googleId !== googleId) {
+        return res.status(409).json({ message: "An account with this email already exists" });
+      }
+      if (!user.googleId) {
+        user.googleId = googleId;
+        if (!user.isVerified && emailVerified) {
+          user.isVerified = true;
+        }
+        await user.save();
+      }
+    } else {
+      user = new User({
+        name: name || normalizedEmail.split("@")[0],
+        email: normalizedEmail,
+        googleId,
+        isVerified: emailVerified ?? true,
+      });
+      await user.save();
+    }
+
+    const token = signToken(user._id);
+    setAuthCookie(res, token);
+
+    res.status(200).json({
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch {
+    res.status(401).json({ message: "Invalid Google credential" });
   }
 });
 

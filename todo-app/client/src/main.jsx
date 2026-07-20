@@ -4,9 +4,12 @@ import "./index.css";
 import App from "./App.jsx";
 import { TodoProvider } from "./context/todo-context.jsx";
 import { AuthProvider } from "./context/auth-context.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const theme = createTheme({
   palette: {
@@ -23,12 +26,14 @@ const theme = createTheme({
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <AuthProvider>
-      <TodoProvider>
-        <App />
-      </TodoProvider>
-    </AuthProvider>
-  </ThemeProvider>
+  <GoogleOAuthProvider clientId={googleClientId}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <TodoProvider>
+          <App />
+        </TodoProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  </GoogleOAuthProvider>
 );

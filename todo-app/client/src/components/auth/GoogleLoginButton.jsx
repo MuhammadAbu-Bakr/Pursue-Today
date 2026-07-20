@@ -1,30 +1,37 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import { Alert, Box } from "@mui/material";
+import { useAuth } from "../../context/auth-context.jsx";
 
 export default function GoogleLoginButton() {
-  const handleSuccess = async (credentialResponse) => {
-    const response = await fetch(
-      "https://pursue-today.onrender.com/api/auth/google",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          credential: credentialResponse.credential,
-        }),
-      }
-    );
+  const { loginWithGoogle } = useAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-    const data = await response.json();
-
-    console.log(data);
-  };
+  async function handleSuccess(credentialResponse) {
+    setError("");
+    try {
+      await loginWithGoogle(credentialResponse.credential);
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    }
+  }
 
   return (
-    <GoogleLogin
-      onSuccess={handleSuccess}
-      onError={() => console.log("Login Failed")}
-    />
+    <Box>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      <Box display="flex" justifyContent="center">
+        <GoogleLogin
+          onSuccess={handleSuccess}
+          onError={() => setError("Google sign-in failed. Please try again.")}
+        />
+      </Box>
+    </Box>
   );
 }

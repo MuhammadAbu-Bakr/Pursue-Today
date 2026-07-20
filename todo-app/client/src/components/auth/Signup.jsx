@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { Box, Button, TextField, Typography, Alert, Paper, Link } from "@mui/material";
+import { Box, Button, TextField, Typography, Alert, Paper, Link, Divider } from "@mui/material";
 import { useAuth } from "../../context/auth-context.jsx";
+import GoogleLoginButton from "./GoogleLoginButton.jsx";
 
 export default function Signup() {
   const { signup } = useAuth();
@@ -108,6 +109,9 @@ export default function Signup() {
             {submitting ? "Creating account..." : "Sign Up"}
           </Button>
         </Box>
+
+        <Divider sx={{ my: 3 }}>or</Divider>
+        <GoogleLoginButton />
         
         <Typography variant="body2" textAlign="center" mt={4} color="text.secondary">
           Already have an account?{' '}
