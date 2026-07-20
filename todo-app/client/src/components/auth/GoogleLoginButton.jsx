@@ -26,7 +26,7 @@ export default function GoogleLoginButton() {
           {error}
         </Alert>
       )}
-      <Box display="flex" justifyContent="center">
+      <Box display="flex" justifyContent="center" ml="2px" mr="2px" mb="2px">
         <GoogleLogin
           onSuccess={handleSuccess}
           onError={() => setError("Google sign-in failed. Please try again.")}
