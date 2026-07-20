@@ -1,7 +1,3 @@
-/**
- * app.js — Express application setup (no DB connection, no listen).
- * Imported by server.js (production) and by tests (via helpers).
- */
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -24,7 +20,7 @@ app.use(cookieParser());
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === "test" ? 1000 : 20, // relax limit in tests
+  max: process.env.NODE_ENV === "test" ? 1000 : 20, 
   message: { message: "Too many attempts, please try again later." },
 });
 
