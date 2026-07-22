@@ -65,7 +65,7 @@ function Todolist() {
               onChange={(e) => setSortBy(e.target.value)}
             >
               <MenuItem value="newest">Newest First</MenuItem>
-              {/* <MenuItem value="oldest">Oldest First</MenuItem> */}
+              <MenuItem value="oldest">Oldest First</MenuItem>
               <MenuItem value="completed">Completed First</MenuItem>
               <MenuItem value="uncompleted">Uncompleted First</MenuItem>
             </Select>

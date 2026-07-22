@@ -166,19 +166,40 @@ export function TodoProvider({ children }) {
     }
   }
 
-  const filteredTasks = tasks.filter(task =>
+  // const filteredTasks = tasks.filter(task =>
+  //   task.text.toLowerCase().includes(searchQuery.toLowerCase())
+  // ).sort((a, b) => {
+  //   if (sortBy === "newest") return 0; // Assuming they are prepended initially
+  //   if (sortBy === "oldest") return -1; // We can't perfectly do oldest without dates, but let's reverse assuming order is newest first
+  //   if (sortBy === "completed") return (b.completed ? 1 : 0) - (a.completed ? 1 : 0);
+  //   if (sortBy === "uncompleted") return (a.completed ? 1 : 0) - (b.completed ? 1 : 0);
+  //   return 0;
+  // });
+  
+  // if (sortBy === "oldest") {
+  //     filteredTasks.reverse();
+  // }
+
+  const filteredTasks = tasks
+  .filter(task =>
     task.text.toLowerCase().includes(searchQuery.toLowerCase())
-  ).sort((a, b) => {
-    if (sortBy === "newest") return 0; // Assuming they are prepended initially
-    if (sortBy === "oldest") return -1; // We can't perfectly do oldest without dates, but let's reverse assuming order is newest first
-    if (sortBy === "completed") return (b.completed ? 1 : 0) - (a.completed ? 1 : 0);
-    if (sortBy === "uncompleted") return (a.completed ? 1 : 0) - (b.completed ? 1 : 0);
+  )
+  .sort((a, b) => {
+    if (sortBy === "newest") {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    if (sortBy === "oldest") {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    }
+    if (sortBy === "completed") {
+      return (b.completed ? 1 : 0) - (a.completed ? 1 : 0);
+    }
+    if (sortBy === "uncompleted") {
+      return (a.completed ? 1 : 0) - (b.completed ? 1 : 0);
+    }
     return 0;
   });
-  
-  if (sortBy === "oldest") {
-      filteredTasks.reverse();
-  }
+
 
   return (
     <TodoContext.Provider

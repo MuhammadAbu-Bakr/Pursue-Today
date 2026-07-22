@@ -1,9 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
 
-const API_BASE = "https://pursue-today.onrender.com/api"; 
-// "https://pursue-today.onrender.com/api"
-// "http://localhost:5000/api"
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
