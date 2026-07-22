@@ -18,18 +18,20 @@ A full-stack MERN to-do list with **user accounts, email verification, and a per
 ## Project structure
 ```
 todo-app/
-├── src/                  # React frontend
-│   ├── components/
-│   │   └── auth/         # Login, Signup, VerifyEmail, ProtectedRoute, AccountBar
-│   └── context/           # auth-context.jsx, todo-context.jsx
+├── client/                # frontend
+│   ├── src/               # React frontend
+│   │   ├── components/
+│   │   │   └── auth/      # Login, Signup, VerifyEmail, ProtectedRoute, AccountBar
+│   │   └── context/       # auth-context.jsx, todo-context.jsx
+│   ├──.env.example
+│   └──package.json 
 ├── server/                # Express backend
 │   ├── models/            # User.js, Todo.js
 │   ├── routes/            # authRoutes.js, todoRoutes.js, usageRoutes.js
 │   ├── middleware/        # auth.js (JWT check)
 │   ├── utils/              # sendEmail.js, storage.js (30MB quota logic)
 │   ├── server.js
-│   └── .env.example
-├── package.json           # frontend
+│   └── .env.example           
 └── README.md
 ```
 
