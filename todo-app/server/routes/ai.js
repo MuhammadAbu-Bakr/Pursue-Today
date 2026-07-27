@@ -21,6 +21,22 @@ router.post("/correct", async (req, res) => {
     });
   } catch (err) {
     console.error("AI /correct error:", err?.message || err);
+
+    const isQuotaError =
+      err?.status === 429 ||
+      err?.code === 429 ||
+      err?.status === "RESOURCE_EXHAUSTED" ||
+      (err?.message || "").includes("RESOURCE_EXHAUSTED") ||
+      (err?.message || "").includes("quota") ||
+      (err?.message || "").toLowerCase().includes("rate limit");
+
+    if (isQuotaError) {
+      return res.status(429).json({
+        message: "AI quota exceeded. Please try again later.",
+        detail: err?.message,
+      });
+    }
+
     res.status(500).json({
       message: "AI failed",
       detail: err?.message,
