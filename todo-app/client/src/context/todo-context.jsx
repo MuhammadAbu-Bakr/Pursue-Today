@@ -9,7 +9,7 @@ const TodoContext = createContext();
 
 async function requestTodos(url, options = {}) {
   const response = await fetch(url, {
-    credentials: "include", 
+    credentials: "include",
     ...options,
   });
   const data = await response.json();
@@ -22,9 +22,10 @@ async function requestTodos(url, options = {}) {
 }
 
 export function TodoProvider({ children }) {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
+
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState("");
+  const [newTask, setNewTask] = useState(""); 
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
   const [loading, setLoading] = useState(true);
@@ -72,12 +73,18 @@ export function TodoProvider({ children }) {
     try {
       setError("");
       setTogglingId(id);
-      const updatedTask = await requestTodos(`${API_URL}/${id}/toggle`, {
-        method: "PATCH",
-      });
+
+      const updatedTask = await requestTodos(
+        `${API_URL}/${id}/toggle`,
+        {
+          method: "PATCH",
+        }
+      );
 
       setTasks(tasks =>
-        tasks.map(task => (task._id === id ? updatedTask : task))
+        tasks.map(task =>
+          task._id === id ? updatedTask : task
+        )
       );
     } catch (err) {
       setError(err.message);
@@ -101,10 +108,18 @@ export function TodoProvider({ children }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: trimmed }),
+
+        body: JSON.stringify({
+          text: trimmed,
+        }),
       });
 
-      setTasks(tasks => [createdTask, ...tasks]);
+      setTasks(tasks => [
+        createdTask,
+        ...tasks,
+      ]);
+
+
       setNewTask("");
     } catch (err) {
       setError(err.message);
@@ -115,11 +130,20 @@ export function TodoProvider({ children }) {
   async function delTask(id) {
     try {
       setError("");
-      await requestTodos(`${API_URL}/${id}`, {
-        method: "DELETE",
-      });
 
-      setTasks(tasks => tasks.filter(task => task._id !== id));
+      await requestTodos(
+        `${API_URL}/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+
+      setTasks(tasks =>
+        tasks.filter(task => task._id !== id)
+      );
+
+
     } catch (err) {
       setError(err.message);
     }
@@ -148,97 +172,146 @@ export function TodoProvider({ children }) {
 
     try {
       setError("");
-      const updatedTask = await requestTodos(`${API_URL}/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: trimmed }),
-      });
+
+      const updatedTask = await requestTodos(
+        `${API_URL}/${id}`,
+        {
+          method: "PUT",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            text: trimmed,
+          }),
+        }
+      );
+
 
       setTasks(tasks =>
-        tasks.map(task => (task._id === id ? updatedTask : task))
+        tasks.map(task =>
+          task._id === id ? updatedTask : task
+        )
       );
+
+
       setEditingId(null);
       setEditText("");
+
+
     } catch (err) {
       setError(err.message);
     }
   }
 
-  // const filteredTasks = tasks.filter(task =>
-  //   task.text.toLowerCase().includes(searchQuery.toLowerCase())
-  // ).sort((a, b) => {
-  //   if (sortBy === "newest") return 0; // Assuming they are prepended initially
-  //   if (sortBy === "oldest") return -1; // We can't perfectly do oldest without dates, but let's reverse assuming order is newest first
-  //   if (sortBy === "completed") return (b.completed ? 1 : 0) - (a.completed ? 1 : 0);
-  //   if (sortBy === "uncompleted") return (a.completed ? 1 : 0) - (b.completed ? 1 : 0);
-  //   return 0;
-  // });
-  
-  // if (sortBy === "oldest") {
-  //     filteredTasks.reverse();
-  // }
+
 
   const filteredTasks = tasks
-  .filter(task =>
-    task.text.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-  .sort((a, b) => {
-    if (sortBy === "newest") {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
-    if (sortBy === "oldest") {
-      return new Date(a.createdAt) - new Date(b.createdAt);
-    }
-    if (sortBy === "completed") {
-      return (b.completed ? 1 : 0) - (a.completed ? 1 : 0);
-    }
-    if (sortBy === "uncompleted") {
-      return (a.completed ? 1 : 0) - (b.completed ? 1 : 0);
-    }
-    return 0;
-  });
+    .filter(task =>
+      task.text
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+    )
+
+    .sort((a, b) => {
+
+      if (sortBy === "newest") {
+        return (
+          new Date(b.createdAt) -
+          new Date(a.createdAt)
+        );
+      }
+
+
+      if (sortBy === "oldest") {
+        return (
+          new Date(a.createdAt) -
+          new Date(b.createdAt)
+        );
+      }
+
+
+      if (sortBy === "completed") {
+        return (
+          (b.completed ? 1 : 0) -
+          (a.completed ? 1 : 0)
+        );
+      }
+
+
+      if (sortBy === "uncompleted") {
+        return (
+          (a.completed ? 1 : 0) -
+          (b.completed ? 1 : 0)
+        );
+      }
+
+
+      return 0;
+    });
+
 
 
   return (
     <TodoContext.Provider
+
       value={{
         tasks,
         filteredTasks,
+
         newTask,
+        setNewTask, 
+
         editingId,
         editText,
+
         loading,
         error,
+
         searchQuery,
         setSearchQuery,
+
         sortBy,
         setSortBy,
+
         isAdding,
         togglingId,
+
+
         handleInputChange,
         handleKeyDown,
+
         toggleTask,
         addTask,
         delTask,
+
         startEdit,
         handleEditChange,
         cancelEdit,
         saveEdit,
       }}
+
     >
       {children}
+
     </TodoContext.Provider>
   );
 }
 
+
+
 export function useTodo() {
+
   const context = useContext(TodoContext);
 
+
   if (!context) {
-    throw new Error("useTodo must be within a TodoProvider");
+    throw new Error(
+      "useTodo must be within a TodoProvider"
+    );
   }
+
 
   return context;
 }
