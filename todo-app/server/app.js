@@ -1,5 +1,3 @@
-import aiRoutes from "./routes/ai.js";
-
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -8,6 +6,7 @@ const rateLimit = require("express-rate-limit");
 const todoRoutes = require("./routes/todoRoutes");
 const authRoutes = require("./routes/authRoutes");
 const usageRoutes = require("./routes/usageRoutes");
+const aiRoutes = require("./routes/ai"); // <-- CommonJS
 
 const app = express();
 
@@ -17,18 +16,19 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === "test" ? 1000 : 20, 
+  max: process.env.NODE_ENV === "test" ? 1000 : 20,
   message: { message: "Too many attempts, please try again later." },
 });
 
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/todos", todoRoutes);
 app.use("/api/usage", usageRoutes);
+app.use("/api/ai", aiRoutes);
 
 module.exports = app;
-app.use("/api/ai", aiRoutes);
