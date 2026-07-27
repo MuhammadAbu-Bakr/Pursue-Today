@@ -9,6 +9,7 @@ import AddIcon from "@mui/icons-material/Add";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 import { useTodo } from "../../context/todo-context.jsx";
+import { API_BASE } from "../../context/auth-context.jsx";
 
 export default function TodoForm() {
   const {
@@ -24,7 +25,7 @@ export default function TodoForm() {
     if (!newTask.trim()) return;
 
     try {
-      const response = await fetch("/api/ai/correct", {
+      const response = await fetch(`${API_BASE}/ai/correct`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
