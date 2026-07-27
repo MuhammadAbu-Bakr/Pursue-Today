@@ -2,6 +2,25 @@ import { Paper, TextField, Button, Stack, CircularProgress } from "@mui/material
 import AddIcon from "@mui/icons-material/Add";
 import { useTodo } from "../../context/todo-context.jsx";
 
+const [newTask, setNewTask] = useState("");
+
+async function fixGrammar() {
+    const response = await fetch("/api/ai/correct", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+            text: newTask,
+        }),
+    });
+
+    const data = await response.json();
+
+    setNewTask(data.corrected);
+}
+
 export default function TodoForm() {
   const {
     newTask,
@@ -52,6 +71,9 @@ export default function TodoForm() {
               px: 3,
             }}
           >
+            <Button onClick={fixGrammar}>
+              Fix Grammar
+            </Button>
             {isAdding ? "Adding..." : "Add Task"}
           </Button>
         </Stack>

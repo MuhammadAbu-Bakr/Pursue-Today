@@ -1,3 +1,5 @@
+import aiRoutes from "./routes/ai.js";
+
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -29,3 +31,4 @@ app.use("/api/todos", todoRoutes);
 app.use("/api/usage", usageRoutes);
 
 module.exports = app;
+app.use("/api/ai", aiRoutes);
