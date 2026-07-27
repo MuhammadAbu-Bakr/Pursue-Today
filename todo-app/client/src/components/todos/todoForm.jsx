@@ -38,7 +38,11 @@ export default function TodoForm() {
 
       const data = await response.json();
 
-      setNewTask(data.corrected);
+      if (response.ok && data.corrected) {
+        setNewTask(data.corrected);
+      } else {
+        console.error("AI correction failed:", data.message);
+      }
     } catch (err) {
       console.error(err);
     }
