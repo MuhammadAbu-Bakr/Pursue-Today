@@ -12,7 +12,7 @@ router.post("/correct", async (req, res) => {
     }
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-lite",
+      model: "gemini 2.5 flash-lite",
       contents: `Correct the spelling and grammar only.\n\nDo NOT:\n- change the meaning\n- rewrite the sentence\n- add extra words\n\nText:\n${text}`,
     });
 
