@@ -1,145 +1,453 @@
+Here is the complete updated `README.md` as a **single Markdown file**:
+
+```markdown
 # To-Do App
 
-A full-stack MERN to-do list with **user accounts, email verification, and a per-user 30MB storage limit**. Every user only ever sees their own tasks.
+A full-stack MERN to-do list application with **user authentication, email verification, AI-powered grammar correction, task searching, sorting, filtering, and a per-user 30MB storage limit**.
 
-## Features
-- Sign up / log in with email + password (passwords hashed with bcrypt)
+Each user has a private workspace where they can manage their own tasks securely. User data is completely isolated between accounts.
+
+---
+
+# Features
+
+## Authentication & Security
+
+- Sign up and log in with email and password
+- Passwords securely hashed using bcrypt
 - Email verification required before login
-- Sessions handled with a secure, httpOnly JWT cookie
-- Each user's tasks are private — fully isolated by account
-- 30MB storage cap per user, enforced on the server, with a live usage bar in the UI
-- Rate-limited auth endpoints to slow down brute-force attempts
+- Authentication handled using JWT stored in secure httpOnly cookies
+- Protected routes for authenticated users only
+- Each user's tasks are completely private
+- Rate limiting on authentication endpoints to prevent brute-force attacks
 
-## Tech stack
-- **Frontend:** React (Vite), Material UI, React Router
-- **Backend:** Node.js, Express, MongoDB (Mongoose)
-- **Auth:** JWT (httpOnly cookies), bcrypt, nodemailer for verification emails
+---
 
-## Project structure
+## Task Management
+
+- Create, update, delete, and complete tasks
+- Edit existing tasks
+- Mark tasks as completed or uncompleted
+- Search tasks using a search bar
+- Sort tasks by:
+  - Newest first
+  - Oldest first
+- Filter tasks by:
+  - All tasks
+  - Completed tasks
+  - Uncompleted tasks
+
+---
+
+## AI Grammar Correction
+
+- Integrated Google Gemini API for grammar and spelling correction
+- Automatically fixes grammar mistakes before adding tasks
+- Keeps the original meaning of the task unchanged
+- Uses Gemini Flash models for fast AI responses
+
+Example:
+
+Before:
+
 ```
+
+buy milk tommorow
+
+```
+
+After:
+
+```
+
+Buy milk tomorrow.
+
+```
+
+---
+
+## Storage Management
+
+- Each user has a 30MB storage limit
+- Storage quota is enforced on the backend
+- Users can see their current storage usage through a live progress bar
+- Prevents users from exceeding their allowed storage
+
+---
+
+# Tech Stack
+
+## Frontend
+
+- React (Vite)
+- Material UI
+- React Router
+- React Context API
+
+## Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+
+## Authentication
+
+- JWT (httpOnly cookies)
+- bcrypt
+- Nodemailer
+
+## AI Integration
+
+- Google Gemini API
+- `@google/genai`
+
+---
+
+# Project Structure
+
+```
+
 todo-app/
-├── client/                # frontend
-│   ├── src/               # React frontend
+│
+├── client/                         # React frontend
+│   ├── src/
 │   │   ├── components/
-│   │   │   └── auth/      # Login, Signup, VerifyEmail, ProtectedRoute, AccountBar
-│   │   └── context/       # auth-context.jsx, todo-context.jsx
-│   ├──.env.example
-│   └──package.json 
-├── server/                # Express backend
-│   ├── models/            # User.js, Todo.js
-│   ├── routes/            # authRoutes.js, todoRoutes.js, usageRoutes.js
-│   ├── middleware/        # auth.js (JWT check)
-│   ├── utils/              # sendEmail.js, storage.js (30MB quota logic)
+│   │   │   ├── auth/               # Login, Signup, VerifyEmail, ProtectedRoute
+│   │   │   └── todo/               # Todo components
+│   │   │
+│   │   └── context/
+│   │       ├── auth-context.jsx
+│   │       └── todo-context.jsx
+│   │
+│   ├── .env.example
+│   └── package.json
+│
+├── server/                         # Express backend
+│   │
+│   ├── models/
+│   │   ├── User.js
+│   │   └── Todo.js
+│   │
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── todoRoutes.js
+│   │   ├── usageRoutes.js
+│   │   └── ai.js                   # Gemini grammar correction route
+│   │
+│   ├── middleware/
+│   │   └── auth.js                 # JWT authentication middleware
+│   │
+│   ├── utils/
+│   │   ├── sendEmail.js
+│   │   └── storage.js              # Storage quota logic
+│   ├── services/
+│   │   └── gemini.js
+│   │
+│   ├── app.js
 │   ├── server.js
-│   └── .env.example           
+│   └── .env.example
+│
 └── README.md
-```
+
+````
 
 ---
 
-## Prerequisites
-Before you start, make sure you have:
-- **Node.js** v18 or newer ([download here](https://nodejs.org)) — check with `node -v`
-- **npm** (comes with Node) — check with `npm -v`
-- A **MongoDB database** — the easiest option is a free [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) cluster
-- An email account you can use to send verification emails (Gmail works fine for development — see step 4 below)
+# Prerequisites
+
+Before running the project, make sure you have:
+
+- Node.js v18 or newer
+- npm
+- MongoDB database
+- Gmail account for email verification
+- Google Gemini API key
 
 ---
 
-## 1. Get the code onto your machine
-If you haven't already, unzip/clone the project and open a terminal in the project's root folder (the one containing `package.json` and the `server/` folder).
+# Backend Setup
 
-## 2. Set up the backend (`server/`)
+Navigate to the server folder:
 
 ```bash
 cd server
 npm install
-```
+````
 
-This installs Express, Mongoose, bcrypt, JWT, nodemailer, and everything else the backend needs.
+This installs all backend dependencies including:
 
-### Create your `.env` file
-The backend needs a `.env` file with your secrets — it is **never committed to git** (see `.gitignore`). Copy the example file to get started:
+* Express
+* Mongoose
+* JWT
+* bcrypt
+* Nodemailer
+* Gemini API SDK
+
+---
+
+# Environment Variables
+
+Create a `.env` file inside the `server` folder:
 
 ```bash
 cp .env.example .env
 ```
 
-Then open `.env` and fill in real values. Here's what each one means:
+Configure the following variables:
 
-| Variable | What it's for | Example |
-|---|---|---|
-| `MONGO_URI` | Your MongoDB connection string | `mongodb+srv://user:pass@cluster.mongodb.net/todoapp` |
-| `JWT_SECRET` | Random string used to sign login tokens — keep this secret | any long random string |
-| `JWT_EXPIRES_IN` | How long a login session lasts | `7d` |
-| `CLIENT_URL` | The URL your **frontend** runs on | `http://localhost:5173` (dev) |
-| `NODE_ENV` | `development` locally, `production` when deployed | `development` |
-| `MAIL_HOST` / `MAIL_PORT` | Your email provider's SMTP server | `smtp.gmail.com` / `587` |
-| `MAIL_USER` / `MAIL_PASS` | Login for that email account | see step 4 below |
-| `MAIL_FROM` | The "from" name/address on verification emails | `"Todo App <you@gmail.com>"` |
-| `MAX_STORAGE_BYTES` | Per-user storage cap in bytes | `31457280` (= 30MB, leave as-is) |
+| Variable          | Description               | Example                                                 |
+| ----------------- | ------------------------- | ------------------------------------------------------- |
+| MONGO_URI         | MongoDB connection string | mongodb+srv://user:password@cluster.mongodb.net/todoapp |
+| JWT_SECRET        | Secret key for JWT tokens | random secure string                                    |
+| JWT_EXPIRES_IN    | JWT expiration time       | 7d                                                      |
+| CLIENT_URL        | Frontend URL              | [http://localhost:5173](http://localhost:5173)          |
+| NODE_ENV          | Application environment   | development                                             |
+| MAIL_HOST         | SMTP server               | smtp.gmail.com                                          |
+| MAIL_PORT         | SMTP port                 | 587                                                     |
+| MAIL_USER         | Email account             | [example@gmail.com](mailto:example@gmail.com)           |
+| MAIL_PASS         | Gmail app password        | generated password                                      |
+| MAIL_FROM         | Sender email              | Todo App                                                |
+| MAX_STORAGE_BYTES | Storage limit             | 31457280                                                |
+| GEMINI_API_KEY    | Google Gemini API key     | your_api_key                                            |
 
-### 3. Get a MongoDB connection string
-1. Sign up at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) (free tier is enough).
-2. Create a free cluster, then click **Connect → Drivers** and copy the connection string.
-3. Replace `<user>` and `<password>` with a database user you create in Atlas (**Database Access** tab).
-4. Under **Network Access**, add your current IP (or `0.0.0.0/0` for "allow from anywhere" while testing).
-5. Paste the finished string into `MONGO_URI` in your `.env`.
+---
 
-### 4. Set up email sending (for verification links)
-The simplest option for testing is Gmail with an **App Password** (not your normal password):
-1. Turn on 2-Step Verification on your Google account.
-2. Go to [Google App Passwords](https://myaccount.google.com/apppasswords) and generate one for "Mail".
-3. Put your Gmail address in `MAIL_USER` and the 16-character app password in `MAIL_PASS`.
+# MongoDB Setup
 
-(In production, a dedicated service like SendGrid, Mailgun, or Resend is more reliable than Gmail — you'd just swap the `MAIL_*` values.)
+1. Create a MongoDB Atlas account.
+2. Create a free cluster.
+3. Go to:
 
-### 5. Start the backend
+```
+Connect → Drivers
+```
+
+4. Copy the connection string.
+5. Replace the username and password.
+6. Add your IP address under Network Access.
+7. Add the connection string to:
+
+```
+MONGO_URI
+```
+
+---
+
+# Email Verification Setup
+
+For Gmail:
+
+1. Enable 2-Step Verification.
+2. Create a Gmail App Password.
+3. Add the credentials:
+
+```
+MAIL_USER
+MAIL_PASS
+```
+
+to your `.env` file.
+
+---
+
+# Gemini API Setup
+
+The application uses Google Gemini to correct grammar mistakes.
+
+Steps:
+
+1. Create a Google AI Studio account.
+2. Generate a Gemini API key.
+3. Add it to:
+
+```
+GEMINI_API_KEY=your_api_key_here
+```
+
+The backend exposes:
+
+```
+POST /api/ai/correct
+```
+
+Example request:
+
+```json
+{
+  "text": "buy milk tommorow"
+}
+```
+
+Example response:
+
+```json
+{
+  "corrected": "Buy milk tomorrow."
+}
+```
+
+---
+
+# Running the Backend
+
+Start the backend server:
+
 ```bash
 npm run dev
 ```
-You should see:
+
+Expected output:
+
 ```
 MongoDB Connected
 Server is running on port 5000
 ```
-Leave this terminal running. If you see a connection error, double-check `MONGO_URI` and that your IP is allowed in Atlas's Network Access settings.
 
 ---
 
-## 3. Set up the frontend
+# Frontend Setup
 
-Open a **new terminal** in the project root (not inside `server/`):
+Open another terminal:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Vite will print a local URL, usually `http://localhost:5173`. Open it in your browser.
+Vite will start the application:
 
-> **Note:** The frontend currently points at a deployed API URL set in `src/context/auth-context.jsx` (`API_BASE`). For local development, change this to `http://localhost:5000/api` so it talks to the backend you just started.
-
----
-
-## 4. Try it out
-1. Go to `/signup`, create an account.
-2. Check the inbox of the email you signed up with — you'll get a verification link.
-3. Click the link (it opens `/verify-email` in the app).
-4. Go to `/login` and log in.
-5. Add some to-dos! You'll see your storage usage bar update as you go — it's capped at 30MB per account.
+```
+http://localhost:5173
+```
 
 ---
 
-## Troubleshooting
-- **"MongoDB connection error"** — check `MONGO_URI` is correct and your IP is whitelisted in Atlas.
-- **Verification email never arrives** — double check `MAIL_USER`/`MAIL_PASS`, check spam folder, and make sure you used an **App Password**, not your real Gmail password.
-- **Login works but todos don't load / "Not authenticated"** — make sure `CLIENT_URL` in the backend `.env` exactly matches the URL your frontend is running on (including `http://` vs `https://`).
-- **CORS errors in the browser console** — same as above; `CLIENT_URL` must match exactly, with no trailing slash.
+# Using the Application
 
-## Deploying
-When you're ready to deploy, the backend and frontend go to separate hosts (e.g. Render for the backend, Vercel for the frontend). Key things to update:
-- Backend `.env`: set `CLIENT_URL` to your live frontend URL and `NODE_ENV=production`.
-- Frontend: update `API_BASE` in `auth-context.jsx` to your live backend URL.
+1. Open the signup page.
+2. Create an account.
+3. Verify your email.
+4. Login.
+5. Start managing your tasks.
 
-See the inline comments in `server/server.js` and `server/routes/authRoutes.js` for how cookies/CORS are configured for production vs. local dev.
+Available features:
+
+* Add tasks
+* Edit tasks
+* Delete tasks
+* Complete tasks
+* Search tasks
+* Sort tasks
+* Filter completed/uncompleted tasks
+* Fix grammar using Gemini AI
+
+---
+
+# Troubleshooting
+
+## MongoDB Connection Error
+
+Check:
+
+* MongoDB connection string
+* Database user credentials
+* Network Access settings
+
+---
+
+## Verification Email Not Received
+
+Check:
+
+* Gmail App Password
+* SMTP configuration
+* Spam folder
+
+---
+
+## Gemini API Error
+
+Check:
+
+* `GEMINI_API_KEY` exists
+* API key is valid
+* Gemini API quota is available
+
+---
+
+## Not Authenticated Error
+
+Check:
+
+* Frontend and backend URLs
+* Cookies enabled
+* `CLIENT_URL` configuration
+
+---
+
+## CORS Error
+
+Make sure:
+
+```
+CLIENT_URL
+```
+
+matches the frontend URL exactly.
+
+---
+
+# Deployment
+
+The application can be deployed separately.
+
+## Frontend
+
+Recommended:
+
+* Vercel
+
+## Backend
+
+Recommended:
+
+* Render
+
+Before deployment update:
+
+Backend:
+
+```
+CLIENT_URL=https://your-frontend-url.com
+NODE_ENV=production
+```
+
+Frontend:
+
+Update the backend API URL inside:
+
+```
+auth-context.jsx
+```
+
+---
+
+# Future Improvements
+
+Possible improvements:
+
+* Dark mode
+* Task categories
+* Due dates and reminders
+* Notifications
+* More AI-powered productivity features
+
+---
+
+# License
+
+This project is for learning and development purposes.
+
+```
+```
