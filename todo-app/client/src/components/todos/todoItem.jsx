@@ -21,8 +21,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
-
-
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 import { useTodo } from "../../context/todo-context.jsx";
 
@@ -42,6 +41,8 @@ export default function TodoItem() {
     handleEditChange,
     cancelEdit,
     saveEdit,
+    fixingId,
+    fixEditGrammar,
   } = useTodo();
 
   if (loading) {
@@ -70,110 +71,122 @@ export default function TodoItem() {
 
   return (
     <Stack spacing={2}>
-      {filteredTasks.map((task) => (
-        <Card
-          key={task._id}
-          elevation={3}
-          sx={{
-            borderRadius: 3,
-          }}
-        >
-          <CardContent>
-            {editingId === task._id ? (
-              <Stack spacing={2}>
-                <TextField
-                  multiline
-                  minRows={3}
-                  fullWidth
-                  label="Edit Task"
-                  value={editText}
-                  onChange={handleEditChange}
-                  autoFocus
-                />
+      {filteredTasks.map((task) => {
+        const isFixingThis = fixingId === task._id;
 
+        return (
+          <Card
+            key={task._id}
+            elevation={3}
+            sx={{
+              borderRadius: 3,
+            }}
+          >
+            <CardContent>
+              {editingId === task._id ? (
+                <Stack spacing={2}>
+                  <TextField
+                    multiline
+                    minRows={3}
+                    fullWidth
+                    label="Edit Task"
+                    value={editText}
+                    onChange={handleEditChange}
+                    autoFocus
+                  />
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: 1,
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      startIcon={
+                        isFixingThis ? (
+                          <CircularProgress size={18} color="inherit" />
+                        ) : (
+                          <AutoFixHighIcon />
+                        )
+                      }
+                      onClick={fixEditGrammar}
+                      disabled={isFixingThis}
+                    >
+                      {isFixingThis ? "Fixing..." : "Fix Grammar"}
+                    </Button>
+
+                    <Button
+                      variant="outlined"
+                      color="inherit"
+                      startIcon={<CloseIcon />}
+                      onClick={cancelEdit}
+                    >
+                      Cancel
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      startIcon={<SaveIcon />}
+                      onClick={() => saveEdit(task._id)}
+                    >
+                      Save
+                    </Button>
+                  </Box>
+                </Stack>
+              ) : (
                 <Box
                   sx={{
                     display: "flex",
-                    justifyContent: "flex-end",
+                    alignItems: "center",
                     gap: 1,
                   }}
                 >
-                  <Button
-                    variant="outlined"
-                    color="inherit"
-                    startIcon={<CloseIcon />}
-                    onClick={cancelEdit}
-                  >
-                    Cancel
-                  </Button>
-
-                  <Button
-                    variant="contained"
-                    startIcon={<SaveIcon />}
-                    onClick={() => saveEdit(task._id)}
-                  >
-                    Save
-                  </Button>
-                </Box>
-              </Stack>
-            ) : (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <Checkbox
-                    checked={task.completed}
-                    onChange={() => toggleTask(task._id)}
-                    disabled={togglingId === task._id}
-                  />
-                  {togglingId === task._id && (
-                    <CircularProgress 
-                      size={24} 
-                      sx={{ 
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        marginTop: '-12px',
-                        marginLeft: '-12px',
-                      }} 
+                  <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
+                    <Checkbox
+                      checked={task.completed}
+                      onChange={() => toggleTask(task._id)}
+                      disabled={togglingId === task._id}
                     />
-                  )}
+                    {togglingId === task._id && (
+                      <CircularProgress
+                        size={24}
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          marginTop: "-12px",
+                          marginLeft: "-12px",
+                        }}
+                      />
+                    )}
+                  </Box>
+
+                  <Typography
+                    sx={{
+                      flexGrow: 1,
+                      wordBreak: "break-word",
+                      textDecoration: task.completed ? "line-through" : "none",
+                      color: task.completed ? "text.secondary" : "text.primary",
+                    }}
+                  >
+                    {task.text}
+                  </Typography>
+
+                  <IconButton color="primary" onClick={() => startEdit(task)}>
+                    <EditIcon />
+                  </IconButton>
+
+                  <IconButton color="error" onClick={() => setDeleteId(task._id)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </Box>
-
-                <Typography
-                  sx={{
-                    flexGrow: 1,
-                    wordBreak: "break-word",
-                    textDecoration: task.completed
-                      ? "line-through"
-                      : "none",
-                    color: task.completed
-                      ? "text.secondary"
-                      : "text.primary",
-                  }}
-                >
-                  {task.text}
-                </Typography>
-
-                <IconButton
-                  color="primary"
-                  onClick={() => startEdit(task)}
-                >
-                  <EditIcon />
-                </IconButton>
-
-                <IconButton color="error" onClick={() => setDeleteId(task._id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-      ))}
+              )}
+            </CardContent>
+          </Card>
+        );
+      })}
 
       <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
         <DialogTitle>Delete this task?</DialogTitle>
