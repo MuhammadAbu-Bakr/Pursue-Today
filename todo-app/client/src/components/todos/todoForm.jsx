@@ -7,21 +7,11 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-  Menu,
-  MenuItem,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 import { useTodo } from "../../context/todo-context.jsx";
-
-const AI_ACTIONS = [
-  { action: "correct", label: "Fix Grammar" },
-  { action: "formal", label: "Formalize" },
-  { action: "casual", label: "Make Casual" },
-  { action: "summarize", label: "Summarize" },
-  { action: "enhance", label: "Enhance" },
-];
+import AIActionsButton from "../ai/AIActionsButton.jsx";
 
 export default function TodoForm() {
   const {
@@ -36,23 +26,13 @@ export default function TodoForm() {
 
   const isFixing = fixingId === "new";
 
-  const [menuAnchor, setMenuAnchor] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" });
 
   function closeSnackbar() {
     setSnackbar((s) => ({ ...s, open: false }));
   }
 
-  function openMenu(e) {
-    setMenuAnchor(e.currentTarget);
-  }
-
-  function closeMenu() {
-    setMenuAnchor(null);
-  }
-
   async function handleAction(action) {
-    closeMenu();
     if (!newTask.trim()) return;
 
     try {
@@ -78,14 +58,7 @@ export default function TodoForm() {
 
   return (
     <>
-      <Paper
-        elevation={3}
-        sx={{
-          p: 3,
-          mb: 3,
-          borderRadius: 3,
-        }}
-      >
+      <Paper elevation={3} sx={{ p: 3, mb: 3, borderRadius: 3 }}>
         <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
             <TextField
@@ -100,28 +73,7 @@ export default function TodoForm() {
             />
 
             <Stack direction="row" spacing={2} justifyContent="flex-end">
-              <Button
-                variant="outlined"
-                startIcon={
-                  isFixing ? (
-                    <CircularProgress size={18} color="inherit" />
-                  ) : (
-                    <AutoFixHighIcon />
-                  )
-                }
-                onClick={openMenu}
-                disabled={isFixing}
-              >
-                {isFixing ? "Working..." : "AI Actions"}
-              </Button>
-
-              <Menu anchorEl={menuAnchor} open={!!menuAnchor} onClose={closeMenu}>
-                {AI_ACTIONS.map(({ action, label }) => (
-                  <MenuItem key={action} onClick={() => handleAction(action)}>
-                    {label}
-                  </MenuItem>
-                ))}
-              </Menu>
+              <AIActionsButton isLoading={isFixing} onSelect={handleAction} />
 
               <Button
                 type="submit"

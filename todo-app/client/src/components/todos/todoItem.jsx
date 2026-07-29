@@ -15,29 +15,18 @@ import {
   DialogContentText,
   DialogActions,
   CircularProgress,
-  Menu,
-  MenuItem,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 import { useTodo } from "../../context/todo-context.jsx";
-
-const AI_ACTIONS = [
-  { action: "correct", label: "Fix Grammar" },
-  { action: "formal", label: "Formalize" },
-  { action: "casual", label: "Make Casual" },
-  { action: "summarize", label: "Summarize" },
-  { action: "enhance", label: "Enhance" },
-];
+import AIActionsButton from "../ai/AIActionsButton.jsx";
 
 export default function TodoItem() {
   const [deleteId, setDeleteId] = useState(null);
-  const [menuAnchor, setMenuAnchor] = useState(null);
 
   const {
     tasks,
@@ -57,21 +46,13 @@ export default function TodoItem() {
     applyEditAction,
   } = useTodo();
 
-  function openMenu(e) {
-    setMenuAnchor(e.currentTarget);
-  }
-
-  function closeMenu() {
-    setMenuAnchor(null);
-  }
-
   async function handleAction(action) {
-    closeMenu();
     if (!editText.trim()) return;
     try {
       await applyEditAction(action);
     } catch (err) {
       console.error(err);
+      // Optional: surface via a Snackbar/toast here if you want per-row feedback
     }
   }
 
@@ -105,13 +86,7 @@ export default function TodoItem() {
         const isFixingThis = fixingId === task._id;
 
         return (
-          <Card
-            key={task._id}
-            elevation={3}
-            sx={{
-              borderRadius: 3,
-            }}
-          >
+          <Card key={task._id} elevation={3} sx={{ borderRadius: 3 }}>
             <CardContent>
               {editingId === task._id ? (
                 <Stack spacing={2}>
@@ -132,28 +107,7 @@ export default function TodoItem() {
                       gap: 1,
                     }}
                   >
-                    <Button
-                      variant="outlined"
-                      startIcon={
-                        isFixingThis ? (
-                          <CircularProgress size={18} color="inherit" />
-                        ) : (
-                          <AutoFixHighIcon />
-                        )
-                      }
-                      onClick={openMenu}
-                      disabled={isFixingThis}
-                    >
-                      {isFixingThis ? "Working..." : "AI Actions"}
-                    </Button>
-
-                    <Menu anchorEl={menuAnchor} open={!!menuAnchor} onClose={closeMenu}>
-                      {AI_ACTIONS.map(({ action, label }) => (
-                        <MenuItem key={action} onClick={() => handleAction(action)}>
-                          {label}
-                        </MenuItem>
-                      ))}
-                    </Menu>
+                    <AIActionsButton isLoading={isFixingThis} onSelect={handleAction} />
 
                     <Button
                       variant="outlined"
@@ -174,13 +128,7 @@ export default function TodoItem() {
                   </Box>
                 </Stack>
               ) : (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <Checkbox
                       checked={task.completed}
