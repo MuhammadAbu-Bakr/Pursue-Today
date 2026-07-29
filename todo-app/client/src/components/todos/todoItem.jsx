@@ -72,7 +72,6 @@ export default function TodoItem() {
       await applyEditAction(action);
     } catch (err) {
       console.error(err);
-      // Optional: surface via your own Snackbar/toast here if you want per-row feedback
     }
   }
 

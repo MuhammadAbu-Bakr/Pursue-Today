@@ -63,47 +63,6 @@ export function TodoProvider({ children }) {
     setNewTask(event.target.value);
   }
 
-  // async function correctGrammar(text) {
-  //   const response = await fetch(`${API_BASE}/ai/correct`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     credentials: "include",
-  //     body: JSON.stringify({ text }),
-  //   });
-
-  //   const data = await response.json();
-
-  //   if (!response.ok) {
-  //     const err = new Error(data.message || "AI correction failed");
-  //     err.status = response.status;
-  //     throw err;
-  //   }
-
-  //   return data.corrected;
-  // }
-
-  // async function fixNewTaskGrammar() {
-  //   if (!newTask.trim()) return;
-  //   setFixingId("new");
-  //   try {
-  //     const corrected = await correctGrammar(newTask);
-  //     setNewTask(corrected);
-  //   } finally {
-  //     setFixingId(null);
-  //   }
-  // }
-
-
-  // async function fixEditGrammar() {
-  //   if (!editText.trim()) return;
-  //   setFixingId(editingId);
-  //   try {
-  //     const corrected = await correctGrammar(editText);
-  //     setEditText(corrected);
-  //   } finally {
-  //     setFixingId(null);
-  //   }
-  // }
   async function transformText(text, action) {
     const response = await fetch(`${API_BASE}/ai/transform`, {
       method: "POST",
@@ -374,9 +333,6 @@ export function TodoProvider({ children }) {
         cancelEdit,
         saveEdit,
 
-        // fixingId,
-        // fixNewTaskGrammar,
-        // fixEditGrammar,
         fixingId,
         applyNewTaskAction,
         applyEditAction,

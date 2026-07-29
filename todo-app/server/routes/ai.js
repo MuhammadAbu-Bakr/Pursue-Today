@@ -13,7 +13,7 @@ const PROMPTS = {
   summarize: (text) =>
     `Summarize the following text concisely, keeping only the key point(s). Return only the summary, nothing else.\n\nText:\n${text}`,
   enhance: (text) =>
-    `Improve the clarity, word choice, and flow of the following text without changing its meaning or significantly changing its length. Return only the improved text, nothing else.\n\nText:\n${text}`,
+    `Enhance the following text by expanding it with more detail, richer word choice, and better flow. Add relevant descriptive detail and elaborate on the ideas already present, without changing the core meaning or introducing new unrelated information. The result should be noticeably longer and more developed than the original. Return only the enhanced text, nothing else.\n\nText:\n${text}`,
 };
 
 router.post("/transform", async (req, res) => {
