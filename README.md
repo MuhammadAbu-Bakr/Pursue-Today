@@ -1,6 +1,3 @@
-Here is the complete updated `README.md` as a **single Markdown file**:
-
-```markdown
 # To-Do App
 
 A full-stack MERN to-do list application with **user authentication, email verification, AI-powered grammar correction, task searching, sorting, filtering, and a per-user 30MB storage limit**.
