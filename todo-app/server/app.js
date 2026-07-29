@@ -6,9 +6,11 @@ const rateLimit = require("express-rate-limit");
 const todoRoutes = require("./routes/todoRoutes");
 const authRoutes = require("./routes/authRoutes");
 const usageRoutes = require("./routes/usageRoutes");
-const aiRoutes = require("./routes/ai"); // <-- CommonJS
+const aiRoutes = require("./routes/ai");
 
 const app = express();
+
+app.set("trust proxy", 1);
 
 app.use(
   cors({
