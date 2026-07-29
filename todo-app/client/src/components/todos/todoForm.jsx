@@ -12,69 +12,43 @@ import AddIcon from "@mui/icons-material/Add";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 import { useTodo } from "../../context/todo-context.jsx";
-import { API_BASE } from "../../context/auth-context.jsx";
 
 export default function TodoForm() {
   const {
     newTask,
-    setNewTask,          // <- Add this to your context
     handleInputChange,
     handleKeyDown,
     addTask,
     isAdding,
+    fixingId,
+    fixNewTaskGrammar,
   } = useTodo();
 
-  const [isFixing, setIsFixing] = useState(false);
+  const isFixing = fixingId === "new";
+
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" });
 
   function closeSnackbar() {
     setSnackbar((s) => ({ ...s, open: false }));
   }
 
-  async function fixGrammar() {
+  async function handleFixGrammar() {
     if (!newTask.trim()) return;
 
-    setIsFixing(true);
     try {
-      const response = await fetch(`${API_BASE}/ai/correct`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          text: newTask,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.corrected) {
-        setNewTask(data.corrected);
-        setSnackbar({ open: true, message: "Grammar corrected!", severity: "success" });
-      } else if (response.status === 429) {
-        setSnackbar({
-          open: true,
-          message: "AI quota exceeded — please try again later.",
-          severity: "warning",
-        });
-      } else {
-        console.error("AI correction failed:", data.message);
-        setSnackbar({
-          open: true,
-          message: data.message || "AI correction failed. Please try again.",
-          severity: "error",
-        });
-      }
+      await fixNewTaskGrammar();
+      setSnackbar({ open: true, message: "Grammar corrected!", severity: "success" });
     } catch (err) {
       console.error(err);
+      const message =
+        err.status === 429
+          ? "AI quota exceeded — please try again later."
+          : err.message || "AI correction failed. Please try again.";
       setSnackbar({
         open: true,
-        message: "Could not reach the AI service. Check your connection.",
-        severity: "error",
+        message,
+        severity: err.status === 429 ? "warning" : "error",
       });
-    } finally {
-      setIsFixing(false);
     }
   }
 
@@ -116,7 +90,7 @@ export default function TodoForm() {
                     <AutoFixHighIcon />
                   )
                 }
-                onClick={fixGrammar}
+                onClick={handleFixGrammar}
                 disabled={isFixing}
               >
                 {isFixing ? "Fixing..." : "Fix Grammar"}
@@ -153,4 +127,4 @@ export default function TodoForm() {
       </Snackbar>
     </>
   );
-}
+}
