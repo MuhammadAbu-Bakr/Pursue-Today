@@ -63,47 +63,87 @@ export function TodoProvider({ children }) {
     setNewTask(event.target.value);
   }
 
-  async function correctGrammar(text) {
-    const response = await fetch(`${API_BASE}/ai/correct`, {
+  // async function correctGrammar(text) {
+  //   const response = await fetch(`${API_BASE}/ai/correct`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     credentials: "include",
+  //     body: JSON.stringify({ text }),
+  //   });
+
+  //   const data = await response.json();
+
+  //   if (!response.ok) {
+  //     const err = new Error(data.message || "AI correction failed");
+  //     err.status = response.status;
+  //     throw err;
+  //   }
+
+  //   return data.corrected;
+  // }
+
+  // async function fixNewTaskGrammar() {
+  //   if (!newTask.trim()) return;
+  //   setFixingId("new");
+  //   try {
+  //     const corrected = await correctGrammar(newTask);
+  //     setNewTask(corrected);
+  //   } finally {
+  //     setFixingId(null);
+  //   }
+  // }
+
+
+  // async function fixEditGrammar() {
+  //   if (!editText.trim()) return;
+  //   setFixingId(editingId);
+  //   try {
+  //     const corrected = await correctGrammar(editText);
+  //     setEditText(corrected);
+  //   } finally {
+  //     setFixingId(null);
+  //   }
+  // }
+  async function transformText(text, action) {
+    const response = await fetch(`${API_BASE}/ai/transform`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, action }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      const err = new Error(data.message || "AI correction failed");
+      const err = new Error(data.message || "AI request failed");
       err.status = response.status;
       throw err;
     }
 
-    return data.corrected;
+    return data.result;
   }
 
-  async function fixNewTaskGrammar() {
+  async function applyNewTaskAction(action) {
     if (!newTask.trim()) return;
     setFixingId("new");
     try {
-      const corrected = await correctGrammar(newTask);
-      setNewTask(corrected);
+      const result = await transformText(newTask, action);
+      setNewTask(result);
     } finally {
       setFixingId(null);
     }
   }
 
-
-  async function fixEditGrammar() {
+  async function applyEditAction(action) {
     if (!editText.trim()) return;
     setFixingId(editingId);
     try {
-      const corrected = await correctGrammar(editText);
-      setEditText(corrected);
+      const result = await transformText(editText, action);
+      setEditText(result);
     } finally {
       setFixingId(null);
     }
-  }
+}
 
   function handleKeyDown(event) {
     if (event.key === "Enter") {
@@ -334,9 +374,12 @@ export function TodoProvider({ children }) {
         cancelEdit,
         saveEdit,
 
+        // fixingId,
+        // fixNewTaskGrammar,
+        // fixEditGrammar,
         fixingId,
-        fixNewTaskGrammar,
-        fixEditGrammar,
+        applyNewTaskAction,
+        applyEditAction,
       }}
 
     >

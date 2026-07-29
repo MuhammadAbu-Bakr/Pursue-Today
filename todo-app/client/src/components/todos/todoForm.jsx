@@ -7,11 +7,21 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 import { useTodo } from "../../context/todo-context.jsx";
+
+const AI_ACTIONS = [
+  { action: "correct", label: "Fix Grammar" },
+  { action: "formal", label: "Formalize" },
+  { action: "casual", label: "Make Casual" },
+  { action: "summarize", label: "Summarize" },
+  { action: "enhance", label: "Enhance" },
+];
 
 export default function TodoForm() {
   const {
@@ -21,29 +31,38 @@ export default function TodoForm() {
     addTask,
     isAdding,
     fixingId,
-    fixNewTaskGrammar,
+    applyNewTaskAction,
   } = useTodo();
 
   const isFixing = fixingId === "new";
 
+  const [menuAnchor, setMenuAnchor] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" });
 
   function closeSnackbar() {
     setSnackbar((s) => ({ ...s, open: false }));
   }
 
-  async function handleFixGrammar() {
+  function openMenu(e) {
+    setMenuAnchor(e.currentTarget);
+  }
+
+  function closeMenu() {
+    setMenuAnchor(null);
+  }
+
+  async function handleAction(action) {
+    closeMenu();
     if (!newTask.trim()) return;
 
     try {
-      await fixNewTaskGrammar();
-      setSnackbar({ open: true, message: "Grammar corrected!", severity: "success" });
+      await applyNewTaskAction(action);
     } catch (err) {
       console.error(err);
       const message =
         err.status === 429
           ? "AI quota exceeded — please try again later."
-          : err.message || "AI correction failed. Please try again.";
+          : err.message || "AI request failed. Please try again.";
       setSnackbar({
         open: true,
         message,
@@ -90,11 +109,19 @@ export default function TodoForm() {
                     <AutoFixHighIcon />
                   )
                 }
-                onClick={handleFixGrammar}
+                onClick={openMenu}
                 disabled={isFixing}
               >
-                {isFixing ? "Fixing..." : "Fix Grammar"}
+                {isFixing ? "Working..." : "AI Actions"}
               </Button>
+
+              <Menu anchorEl={menuAnchor} open={!!menuAnchor} onClose={closeMenu}>
+                {AI_ACTIONS.map(({ action, label }) => (
+                  <MenuItem key={action} onClick={() => handleAction(action)}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Button
                 type="submit"

@@ -15,6 +15,8 @@ import {
   DialogContentText,
   DialogActions,
   CircularProgress,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,8 +27,18 @@ import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 import { useTodo } from "../../context/todo-context.jsx";
 
+const AI_ACTIONS = [
+  { action: "correct", label: "Fix Grammar" },
+  { action: "formal", label: "Formalize" },
+  { action: "casual", label: "Make Casual" },
+  { action: "summarize", label: "Summarize" },
+  { action: "enhance", label: "Enhance" },
+];
+
 export default function TodoItem() {
   const [deleteId, setDeleteId] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+
   const {
     tasks,
     filteredTasks,
@@ -42,8 +54,27 @@ export default function TodoItem() {
     cancelEdit,
     saveEdit,
     fixingId,
-    fixEditGrammar,
+    applyEditAction,
   } = useTodo();
+
+  function openMenu(e) {
+    setMenuAnchor(e.currentTarget);
+  }
+
+  function closeMenu() {
+    setMenuAnchor(null);
+  }
+
+  async function handleAction(action) {
+    closeMenu();
+    if (!editText.trim()) return;
+    try {
+      await applyEditAction(action);
+    } catch (err) {
+      console.error(err);
+      // Optional: surface via your own Snackbar/toast here if you want per-row feedback
+    }
+  }
 
   if (loading) {
     return (
@@ -111,11 +142,19 @@ export default function TodoItem() {
                           <AutoFixHighIcon />
                         )
                       }
-                      onClick={fixEditGrammar}
+                      onClick={openMenu}
                       disabled={isFixingThis}
                     >
-                      {isFixingThis ? "Fixing..." : "Fix Grammar"}
+                      {isFixingThis ? "Working..." : "AI Actions"}
                     </Button>
+
+                    <Menu anchorEl={menuAnchor} open={!!menuAnchor} onClose={closeMenu}>
+                      {AI_ACTIONS.map(({ action, label }) => (
+                        <MenuItem key={action} onClick={() => handleAction(action)}>
+                          {label}
+                        </MenuItem>
+                      ))}
+                    </Menu>
 
                     <Button
                       variant="outlined"

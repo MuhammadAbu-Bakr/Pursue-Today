@@ -3,24 +3,42 @@ const { ai } = require("../services/gemini");
 
 const router = express.Router();
 
-router.post("/correct", async (req, res) => {
+const PROMPTS = {
+  correct: (text) =>
+    `Correct the spelling and grammar only.\n\nDo NOT:\n- change the meaning\n- rewrite the sentence\n- add extra words\n\nText:\n${text}`,
+  formal: (text) =>
+    `Rewrite the following text in a formal, professional tone. Keep the original meaning and length roughly the same. Return only the rewritten text, nothing else.\n\nText:\n${text}`,
+  casual: (text) =>
+    `Rewrite the following text in a casual, relaxed, conversational tone. Keep the original meaning. Return only the rewritten text, nothing else.\n\nText:\n${text}`,
+  summarize: (text) =>
+    `Summarize the following text concisely, keeping only the key point(s). Return only the summary, nothing else.\n\nText:\n${text}`,
+  enhance: (text) =>
+    `Improve the clarity, word choice, and flow of the following text without changing its meaning or significantly changing its length. Return only the improved text, nothing else.\n\nText:\n${text}`,
+};
+
+router.post("/transform", async (req, res) => {
   try {
-    const { text } = req.body;
+    const { text, action } = req.body;
 
     if (!text) {
       return res.status(400).json({ message: "No text provided" });
     }
 
+    const buildPrompt = PROMPTS[action];
+    if (!buildPrompt) {
+      return res.status(400).json({ message: `Unknown action: ${action}` });
+    }
+
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
-      contents: `Correct the spelling and grammar only.\n\nDo NOT:\n- change the meaning\n- rewrite the sentence\n- add extra words\n\nText:\n${text}`,
+      contents: buildPrompt(text),
     });
 
     res.json({
-      corrected: response.text,
+      result: response.text,
     });
   } catch (err) {
-    console.error("AI /correct error:", err?.message || err);
+    console.error("AI /transform error:", err?.message || err);
 
     const isQuotaError =
       err?.status === 429 ||
