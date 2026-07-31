@@ -68,9 +68,17 @@ export default function TodoItem() {
 
   if (loading) {
     return (
-      <Typography textAlign="center" sx={{ mt: 2 }}>
-        Loading tasks...
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "200px",
+          width: "100%",
+        }}
+      >
+        <CircularProgress />
+      </Box>
     );
   }
 
@@ -111,14 +119,20 @@ export default function TodoItem() {
                     onChange={handleEditChange}
                     autoFocus
                   />
-                  
+
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: "block", mb: 0.5 }}
+                      >
+                        Due Date
+                      </Typography>
                       <TextField
-                        label="Due Date"
                         type="datetime-local"
                         fullWidth
-                        InputLabelProps={{ shrink: true }}
+                        size="small"
                         value={editDueDate}
                         onChange={(e) => setEditDueDate(e.target.value)}
                       />
@@ -209,10 +223,10 @@ export default function TodoItem() {
                     </Typography>
                     <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
                       {task.priority && (
-                        <Chip 
-                          label={task.priority} 
-                          size="small" 
-                          color={task.priority === 'High' ? 'error' : task.priority === 'Medium' ? 'warning' : 'success'} 
+                        <Chip
+                          label={task.priority}
+                          size="small"
+                          color={task.priority === 'High' ? 'error' : task.priority === 'Medium' ? 'warning' : 'success'}
                         />
                       )}
                       {task.category && (
@@ -222,9 +236,9 @@ export default function TodoItem() {
                         <Chip key={tag} label={tag} size="small" variant="outlined" />
                       ))}
                       {task.dueDate && (
-                        <Chip 
-                          label={new Date(task.dueDate).toLocaleString()} 
-                          size="small" 
+                        <Chip
+                          label={new Date(task.dueDate).toLocaleString()}
+                          size="small"
                         />
                       )}
                       {isOverdue && <Chip label="Overdue" size="small" color="error" />}
