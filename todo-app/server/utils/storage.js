@@ -3,8 +3,13 @@ const User = require("../models/User");
 const DEFAULT_MAX_STORAGE_BYTES = 30 * 1024 * 1024;
 
 
-function getTodoSize({ text = "", completed = false }) {
-  return Buffer.byteLength(text, "utf8") + Buffer.byteLength(String(completed), "utf8");
+function getTodoSize({ text = "", completed = false, dueDate = null, priority = "", category = "", tags = [] }) {
+  let size = Buffer.byteLength(text, "utf8") + Buffer.byteLength(String(completed), "utf8");
+  if (dueDate) size += Buffer.byteLength(String(dueDate), "utf8");
+  if (priority) size += Buffer.byteLength(priority, "utf8");
+  if (category) size += Buffer.byteLength(category, "utf8");
+  if (tags && tags.length > 0) size += Buffer.byteLength(tags.join(","), "utf8");
+  return size;
 }
 
 
@@ -34,7 +39,7 @@ async function adjustUsage(userId, delta) {
 }
 async function recalculateUsage(userId) {
   const Todo = require("../models/Todo");
-  const todos = await Todo.find({ user: userId }).select("text completed");
+  const todos = await Todo.find({ user: userId }).select("text completed dueDate priority category tags");
   const total = todos.reduce((sum, t) => sum + getTodoSize(t), 0);
   await User.findByIdAndUpdate(userId, { dataUsageBytes: total });
   return total;

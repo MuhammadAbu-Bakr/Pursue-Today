@@ -36,6 +36,19 @@ export function TodoProvider({ children }) {
   const [togglingId, setTogglingId] = useState(null);
   const [fixingId, setFixingId] = useState(null); 
 
+  const [newDueDate, setNewDueDate] = useState("");
+  const [newPriority, setNewPriority] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [newTags, setNewTags] = useState("");
+
+  const [editDueDate, setEditDueDate] = useState("");
+  const [editPriority, setEditPriority] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editTags, setEditTags] = useState("");
+
+  const [filterCategory, setFilterCategory] = useState("");
+  const [filterTags, setFilterTags] = useState("");
+
   useEffect(() => {
     if (!user) {
       setTasks([]);
@@ -153,6 +166,10 @@ export function TodoProvider({ children }) {
 
         body: JSON.stringify({
           text: trimmed,
+          dueDate: newDueDate || null,
+          priority: newPriority,
+          category: newCategory,
+          tags: newTags ? newTags.split(',').map(t => t.trim()).filter(Boolean) : []
         }),
       });
 
@@ -163,6 +180,10 @@ export function TodoProvider({ children }) {
 
 
       setNewTask("");
+      setNewDueDate("");
+      setNewPriority("");
+      setNewCategory("");
+      setNewTags("");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -194,6 +215,10 @@ export function TodoProvider({ children }) {
   function startEdit(task) {
     setEditingId(task._id);
     setEditText(task.text);
+    setEditDueDate(task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 16) : "");
+    setEditPriority(task.priority || "");
+    setEditCategory(task.category || "");
+    setEditTags(task.tags ? task.tags.join(", ") : "");
   }
 
   function handleEditChange(event) {
@@ -203,6 +228,10 @@ export function TodoProvider({ children }) {
   function cancelEdit() {
     setEditingId(null);
     setEditText("");
+    setEditDueDate("");
+    setEditPriority("");
+    setEditCategory("");
+    setEditTags("");
   }
 
   async function saveEdit(id) {
@@ -226,6 +255,10 @@ export function TodoProvider({ children }) {
 
           body: JSON.stringify({
             text: trimmed,
+            dueDate: editDueDate || null,
+            priority: editPriority,
+            category: editCategory,
+            tags: editTags ? editTags.split(',').map(t => t.trim()).filter(Boolean) : []
           }),
         }
       );
@@ -238,8 +271,7 @@ export function TodoProvider({ children }) {
       );
 
 
-      setEditingId(null);
-      setEditText("");
+      cancelEdit();
 
 
     } catch (err) {
@@ -250,45 +282,44 @@ export function TodoProvider({ children }) {
 
 
   const filteredTasks = tasks
-    .filter(task =>
-      task.text
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    )
-
+    .filter(task => {
+      const matchSearch = task.text.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchCategory = filterCategory ? task.category === filterCategory : true;
+      const matchTags = filterTags ? filterTags.split(',').map(t=>t.trim()).filter(Boolean).every(tag => task.tags && task.tags.includes(tag)) : true;
+      return matchSearch && matchCategory && matchTags;
+    })
     .sort((a, b) => {
 
       if (sortBy === "newest") {
-        return (
-          new Date(b.createdAt) -
-          new Date(a.createdAt)
-        );
+        return new Date(b.createdAt) - new Date(a.createdAt);
       }
-
-
       if (sortBy === "oldest") {
-        return (
-          new Date(a.createdAt) -
-          new Date(b.createdAt)
-        );
+        return new Date(a.createdAt) - new Date(b.createdAt);
       }
-
-
       if (sortBy === "completed") {
-        return (
-          (b.completed ? 1 : 0) -
-          (a.completed ? 1 : 0)
-        );
+        return (b.completed ? 1 : 0) - (a.completed ? 1 : 0);
       }
-
-
       if (sortBy === "uncompleted") {
-        return (
-          (a.completed ? 1 : 0) -
-          (b.completed ? 1 : 0)
-        );
+        return (a.completed ? 1 : 0) - (b.completed ? 1 : 0);
       }
-
+      if (sortBy === "soonest") {
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      }
+      if (sortBy === "latest") {
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        return new Date(b.dueDate) - new Date(a.dueDate);
+      }
+      if (sortBy === "priority-high-low") {
+        const p = { High: 3, Medium: 2, Low: 1, '': 0 };
+        return p[b.priority || ''] - p[a.priority || ''];
+      }
+      if (sortBy === "priority-low-high") {
+        const p = { High: 3, Medium: 2, Low: 1, '': 0 };
+        return p[a.priority || ''] - p[b.priority || ''];
+      }
 
       return 0;
     });
@@ -304,15 +335,25 @@ export function TodoProvider({ children }) {
 
         newTask,
         setNewTask, 
+        newDueDate, setNewDueDate,
+        newPriority, setNewPriority,
+        newCategory, setNewCategory,
+        newTags, setNewTags,
 
         editingId,
         editText,
+        editDueDate, setEditDueDate,
+        editPriority, setEditPriority,
+        editCategory, setEditCategory,
+        editTags, setEditTags,
 
         loading,
         error,
 
         searchQuery,
         setSearchQuery,
+        filterCategory, setFilterCategory,
+        filterTags, setFilterTags,
 
         sortBy,
         setSortBy,

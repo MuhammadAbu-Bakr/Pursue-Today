@@ -31,11 +31,16 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const newContent = { text: req.body.text, completed: false };
+    const { text, dueDate, priority, category, tags } = req.body;
+    const newContent = { text, completed: false, dueDate, priority, category, tags };
     const size = await assertWithinQuota(req.user.id, newContent);
 
     const todo = await Todo.create({
-      text: req.body.text,
+      text,
+      dueDate,
+      priority,
+      category,
+      tags,
       user: req.user.id,
     });
 
@@ -58,6 +63,10 @@ router.put("/:id", async (req, res) => {
     const newContent = {
       text: req.body.text ?? existing.text,
       completed: req.body.completed ?? existing.completed,
+      dueDate: req.body.dueDate !== undefined ? req.body.dueDate : existing.dueDate,
+      priority: req.body.priority ?? existing.priority,
+      category: req.body.category ?? existing.category,
+      tags: req.body.tags ?? existing.tags,
     };
     const newSize = await assertWithinQuota(req.user.id, newContent, previousSize);
 

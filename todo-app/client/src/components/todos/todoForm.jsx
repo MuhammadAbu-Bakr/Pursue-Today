@@ -7,6 +7,11 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Grid,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -22,6 +27,10 @@ export default function TodoForm() {
     isAdding,
     fixingId,
     applyNewTaskAction,
+    newDueDate, setNewDueDate,
+    newPriority, setNewPriority,
+    newCategory, setNewCategory,
+    newTags, setNewTags,
   } = useTodo();
 
   const isFixing = fixingId === "new";
@@ -71,6 +80,52 @@ export default function TodoForm() {
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
             />
+
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={3}>
+                <TextField
+                  label="Due Date & Time"
+                  type="datetime-local"
+                  fullWidth
+                  InputLabelProps={{ shrink: true }}
+                  value={newDueDate}
+                  onChange={(e) => setNewDueDate(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Priority</InputLabel>
+                  <Select
+                    value={newPriority}
+                    label="Priority"
+                    onChange={(e) => setNewPriority(e.target.value)}
+                  >
+                    <MenuItem value=""><em>None</em></MenuItem>
+                    <MenuItem value="Low">Low</MenuItem>
+                    <MenuItem value="Medium">Medium</MenuItem>
+                    <MenuItem value="High">High</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <TextField
+                  label="Category"
+                  placeholder="e.g. Work"
+                  fullWidth
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <TextField
+                  label="Tags"
+                  placeholder="Comma separated"
+                  fullWidth
+                  value={newTags}
+                  onChange={(e) => setNewTags(e.target.value)}
+                />
+              </Grid>
+            </Grid>
 
             <Stack direction="row" spacing={2} justifyContent="flex-end">
               <AIActionsButton isLoading={isFixing} onSelect={handleAction} />

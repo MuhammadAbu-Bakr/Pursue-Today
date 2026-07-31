@@ -16,7 +16,7 @@ import {
 import { useTodo } from "../../context/todo-context.jsx";
 
 function Todolist() {
-  const { searchQuery, setSearchQuery, sortBy, setSortBy } = useTodo();
+  const { searchQuery, setSearchQuery, sortBy, setSortBy, filterCategory, setFilterCategory, filterTags, setFilterTags } = useTodo();
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
@@ -57,6 +57,21 @@ function Todolist() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <TextField 
+            label="Filter Category" 
+            variant="outlined" 
+            fullWidth 
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+          />
+          <TextField 
+            label="Filter Tags" 
+            placeholder="comma separated"
+            variant="outlined" 
+            fullWidth 
+            value={filterTags}
+            onChange={(e) => setFilterTags(e.target.value)}
+          />
           <FormControl sx={{ minWidth: { xs: '100%', sm: 200 } }}>
             <InputLabel>Sort By</InputLabel>
             <Select
@@ -68,6 +83,10 @@ function Todolist() {
               <MenuItem value="oldest">Oldest First</MenuItem>
               <MenuItem value="completed">Completed First</MenuItem>
               <MenuItem value="uncompleted">Uncompleted First</MenuItem>
+              <MenuItem value="soonest">Deadline: Soonest</MenuItem>
+              <MenuItem value="latest">Deadline: Latest</MenuItem>
+              <MenuItem value="priority-high-low">Priority: High to Low</MenuItem>
+              <MenuItem value="priority-low-high">Priority: Low to High</MenuItem>
             </Select>
           </FormControl>
         </Box>

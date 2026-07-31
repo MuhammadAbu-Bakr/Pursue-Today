@@ -15,6 +15,12 @@ import {
   DialogContentText,
   DialogActions,
   CircularProgress,
+  Chip,
+  Grid,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -44,6 +50,10 @@ export default function TodoItem() {
     saveEdit,
     fixingId,
     applyEditAction,
+    editDueDate, setEditDueDate,
+    editPriority, setEditPriority,
+    editCategory, setEditCategory,
+    editTags, setEditTags,
   } = useTodo();
 
   async function handleAction(action) {
@@ -84,6 +94,8 @@ export default function TodoItem() {
     <Stack spacing={2}>
       {filteredTasks.map((task) => {
         const isFixingThis = fixingId === task._id;
+        const isOverdue = task.dueDate && !task.completed && new Date(task.dueDate) < new Date();
+        const isDueToday = task.dueDate && !task.completed && new Date(task.dueDate).toDateString() === new Date().toDateString();
 
         return (
           <Card key={task._id} elevation={3} sx={{ borderRadius: 3 }}>
@@ -99,6 +111,50 @@ export default function TodoItem() {
                     onChange={handleEditChange}
                     autoFocus
                   />
+                  
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <TextField
+                        label="Due Date & Time"
+                        type="datetime-local"
+                        fullWidth
+                        InputLabelProps={{ shrink: true }}
+                        value={editDueDate}
+                        onChange={(e) => setEditDueDate(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <FormControl fullWidth>
+                        <InputLabel>Priority</InputLabel>
+                        <Select
+                          value={editPriority}
+                          label="Priority"
+                          onChange={(e) => setEditPriority(e.target.value)}
+                        >
+                          <MenuItem value=""><em>None</em></MenuItem>
+                          <MenuItem value="Low">Low</MenuItem>
+                          <MenuItem value="Medium">Medium</MenuItem>
+                          <MenuItem value="High">High</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <TextField
+                        label="Category"
+                        fullWidth
+                        value={editCategory}
+                        onChange={(e) => setEditCategory(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <TextField
+                        label="Tags"
+                        fullWidth
+                        value={editTags}
+                        onChange={(e) => setEditTags(e.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
 
                   <Box
                     sx={{
@@ -129,36 +185,51 @@ export default function TodoItem() {
                 </Stack>
               ) : (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
-                    <Checkbox
-                      checked={task.completed}
-                      onChange={() => toggleTask(task._id)}
-                      disabled={togglingId === task._id}
-                    />
-                    {togglingId === task._id && (
-                      <CircularProgress
-                        size={24}
-                        sx={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          marginTop: "-12px",
-                          marginLeft: "-12px",
-                        }}
+                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: 42, height: 42 }}>
+                    {togglingId === task._id ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      <Checkbox
+                        checked={task.completed}
+                        onChange={() => toggleTask(task._id)}
                       />
                     )}
                   </Box>
 
-                  <Typography
-                    sx={{
-                      flexGrow: 1,
-                      wordBreak: "break-word",
-                      textDecoration: task.completed ? "line-through" : "none",
-                      color: task.completed ? "text.secondary" : "text.primary",
-                    }}
-                  >
-                    {task.text}
-                  </Typography>
+                  <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+                    <Typography
+                      sx={{
+                        wordBreak: "break-word",
+                        textDecoration: task.completed ? "line-through" : "none",
+                        color: task.completed ? "text.secondary" : "text.primary",
+                      }}
+                    >
+                      {task.text}
+                    </Typography>
+                    <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
+                      {task.priority && (
+                        <Chip 
+                          label={task.priority} 
+                          size="small" 
+                          color={task.priority === 'High' ? 'error' : task.priority === 'Medium' ? 'warning' : 'success'} 
+                        />
+                      )}
+                      {task.category && (
+                        <Chip label={task.category} size="small" color="primary" variant="outlined" />
+                      )}
+                      {task.tags && task.tags.map(tag => (
+                        <Chip key={tag} label={tag} size="small" variant="outlined" />
+                      ))}
+                      {task.dueDate && (
+                        <Chip 
+                          label={new Date(task.dueDate).toLocaleString()} 
+                          size="small" 
+                        />
+                      )}
+                      {isOverdue && <Chip label="Overdue" size="small" color="error" />}
+                      {!isOverdue && isDueToday && <Chip label="Due Today" size="small" color="warning" />}
+                    </Stack>
+                  </Box>
 
                   <IconButton color="primary" onClick={() => startEdit(task)}>
                     <EditIcon />
