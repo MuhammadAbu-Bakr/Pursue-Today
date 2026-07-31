@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" width="100%" minHeight="100vh">
+      <Box sx={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <CircularProgress />
       </Box>
     );

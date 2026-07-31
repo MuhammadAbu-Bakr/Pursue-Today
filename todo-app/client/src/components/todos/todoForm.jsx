@@ -82,9 +82,9 @@ export default function TodoForm() {
             />
 
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Due Date & Time"
+                  label="Due Date"
                   type="datetime-local"
                   fullWidth
                   InputLabelProps={{ shrink: true }}
@@ -92,10 +92,11 @@ export default function TodoForm() {
                   onChange={(e) => setNewDueDate(e.target.value)}
                 />
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Priority</InputLabel>
+                  <InputLabel id="new-priority-label">Priority</InputLabel>
                   <Select
+                    labelId="new-priority-label"
                     value={newPriority}
                     label="Priority"
                     onChange={(e) => setNewPriority(e.target.value)}
@@ -107,7 +108,7 @@ export default function TodoForm() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   label="Category"
                   placeholder="e.g. Work"
@@ -116,7 +117,7 @@ export default function TodoForm() {
                   onChange={(e) => setNewCategory(e.target.value)}
                 />
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   label="Tags"
                   placeholder="Comma separated"
