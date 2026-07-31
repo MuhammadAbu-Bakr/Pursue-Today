@@ -12,6 +12,7 @@ import {
   FormControl,
   InputLabel,
   Grid,
+  Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -83,11 +84,17 @@ export default function TodoForm() {
 
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: "block", mb: 0.5 }}
+                >
+                  Due Date
+                </Typography>
                 <TextField
-                  label="Due Date"
                   type="datetime-local"
                   fullWidth
-                  InputLabelProps={{ shrink: true }}
+                  size="small"
                   value={newDueDate}
                   onChange={(e) => setNewDueDate(e.target.value)}
                 />
