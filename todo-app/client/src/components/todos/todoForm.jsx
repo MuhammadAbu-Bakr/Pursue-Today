@@ -100,15 +100,25 @@ export default function TodoForm() {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
+                <FormControl
+                  fullWidth
+                  sx={{
+                    minWidth: 220,
+                  }}
+                >
                   <InputLabel id="new-priority-label">Priority</InputLabel>
                   <Select
                     labelId="new-priority-label"
                     value={newPriority}
                     label="Priority"
                     onChange={(e) => setNewPriority(e.target.value)}
+                    sx={{
+                      width: "100%",
+                    }}
                   >
-                    <MenuItem value=""><em>None</em></MenuItem>
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
                     <MenuItem value="Low">Low</MenuItem>
                     <MenuItem value="Medium">Medium</MenuItem>
                     <MenuItem value="High">High</MenuItem>
