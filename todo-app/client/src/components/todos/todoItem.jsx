@@ -50,19 +50,23 @@ export default function TodoItem() {
     saveEdit,
     fixingId,
     applyEditAction,
-    editDueDate, setEditDueDate,
-    editPriority, setEditPriority,
-    editCategory, setEditCategory,
-    editTags, setEditTags,
+    editDueDate,
+    setEditDueDate,
+    editPriority,
+    setEditPriority,
+    editCategory,
+    setEditCategory,
+    editTags,
+    setEditTags,
   } = useTodo();
 
   async function handleAction(action) {
     if (!editText.trim()) return;
+
     try {
       await applyEditAction(action);
     } catch (err) {
       console.error(err);
-      // Optional: surface via a Snackbar/toast here if you want per-row feedback
     }
   }
 
@@ -102,11 +106,41 @@ export default function TodoItem() {
     <Stack spacing={2}>
       {filteredTasks.map((task) => {
         const isFixingThis = fixingId === task._id;
-        const isOverdue = task.dueDate && !task.completed && new Date(task.dueDate) < new Date();
-        const isDueToday = task.dueDate && !task.completed && new Date(task.dueDate).toDateString() === new Date().toDateString();
+
+        const now = new Date();
+
+        const today = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+
+        const due = task.dueDate ? new Date(task.dueDate) : null;
+
+        const dueDay = due
+          ? new Date(
+              due.getFullYear(),
+              due.getMonth(),
+              due.getDate()
+            )
+          : null;
+
+        const isDueToday =
+          due &&
+          !task.completed &&
+          dueDay.getTime() === today.getTime();
+
+        const isOverdue =
+          due &&
+          !task.completed &&
+          dueDay < today;
 
         return (
-          <Card key={task._id} elevation={3} sx={{ borderRadius: 3 }}>
+          <Card
+            key={task._id}
+            elevation={3}
+            sx={{ borderRadius: 3 }}
+          >
             <CardContent>
               {editingId === task._id ? (
                 <Stack spacing={2}>
@@ -121,52 +155,84 @@ export default function TodoItem() {
                   />
 
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} md={5}>
                       <Typography
                         variant="caption"
                         color="text.secondary"
-                        sx={{ display: "block", mb: 0.5 }}
+                        sx={{
+                          display: "block",
+                          mb: 0.5,
+                        }}
                       >
                         Due Date
                       </Typography>
+
                       <TextField
                         type="datetime-local"
                         fullWidth
                         size="small"
                         value={editDueDate}
-                        onChange={(e) => setEditDueDate(e.target.value)}
+                        onChange={(e) =>
+                          setEditDueDate(e.target.value)
+                        }
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+
+                    <Grid item xs={12} md={7}>
                       <FormControl fullWidth>
-                        <InputLabel id="edit-priority-label">Priority</InputLabel>
+                        <InputLabel id="edit-priority-label">
+                          Priority
+                        </InputLabel>
+
                         <Select
                           labelId="edit-priority-label"
                           value={editPriority}
                           label="Priority"
-                          onChange={(e) => setEditPriority(e.target.value)}
+                          onChange={(e) =>
+                            setEditPriority(e.target.value)
+                          }
                         >
-                          <MenuItem value=""><em>None</em></MenuItem>
-                          <MenuItem value="Low">Low</MenuItem>
-                          <MenuItem value="Medium">Medium</MenuItem>
-                          <MenuItem value="High">High</MenuItem>
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+
+                          <MenuItem value="Low">
+                            Low
+                          </MenuItem>
+
+                          <MenuItem value="Medium">
+                            Medium
+                          </MenuItem>
+
+                          <MenuItem value="High">
+                            High
+                          </MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
+
                     <Grid item xs={12} sm={6}>
                       <TextField
                         label="Category"
                         fullWidth
                         value={editCategory}
-                        onChange={(e) => setEditCategory(e.target.value)}
+                        onChange={(e) =>
+                          setEditCategory(e.target.value)
+                        }
                       />
                     </Grid>
+
                     <Grid item xs={12} sm={6}>
                       <TextField
                         label="Tags"
                         fullWidth
                         value={editTags}
-                        onChange={(e) => setEditTags(e.target.value)}
+                        onChange={(e) =>
+                          setEditTags(e.target.value)
+                        }
                       />
                     </Grid>
                   </Grid>
@@ -178,7 +244,10 @@ export default function TodoItem() {
                       gap: 1,
                     }}
                   >
-                    <AIActionsButton isLoading={isFixingThis} onSelect={handleAction} />
+                    <AIActionsButton
+                      isLoading={isFixingThis}
+                      onSelect={handleAction}
+                    />
 
                     <Button
                       variant="outlined"
@@ -199,58 +268,139 @@ export default function TodoItem() {
                   </Box>
                 </Stack>
               ) : (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: 42, height: 42 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 42,
+                      height: 42,
+                    }}
+                  >
                     {togglingId === task._id ? (
                       <CircularProgress size={24} />
                     ) : (
                       <Checkbox
                         checked={task.completed}
-                        onChange={() => toggleTask(task._id)}
+                        onChange={() =>
+                          toggleTask(task._id)
+                        }
                       />
                     )}
                   </Box>
 
-                  <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      flexGrow: 1,
+                    }}
+                  >
                     <Typography
                       sx={{
                         wordBreak: "break-word",
-                        textDecoration: task.completed ? "line-through" : "none",
-                        color: task.completed ? "text.secondary" : "text.primary",
+                        textDecoration: task.completed
+                          ? "line-through"
+                          : "none",
+                        color: task.completed
+                          ? "text.secondary"
+                          : "text.primary",
                       }}
                     >
                       {task.text}
                     </Typography>
-                    <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
-                      {task.priority && (
+
+                    <Stack
+                      direction="row"
+                      sx={{
+                        mt: 1,
+                        flexWrap: "wrap",
+                        gap: 1,
+                      }}
+                    >
+                                            {task.priority && (
                         <Chip
                           label={task.priority}
                           size="small"
-                          color={task.priority === 'High' ? 'error' : task.priority === 'Medium' ? 'warning' : 'success'}
+                          color={
+                            task.priority === "High"
+                              ? "error"
+                              : task.priority === "Medium"
+                              ? "warning"
+                              : "success"
+                          }
+                          sx={{
+                            minWidth: 90,
+                            justifyContent: "center",
+                            fontWeight: 600,
+                          }}
                         />
                       )}
+
                       {task.category && (
-                        <Chip label={task.category} size="small" color="primary" variant="outlined" />
+                        <Chip
+                          label={task.category}
+                          size="small"
+                          color="primary"
+                          variant="outlined"
+                        />
                       )}
-                      {task.tags && task.tags.map(tag => (
-                        <Chip key={tag} label={tag} size="small" variant="outlined" />
-                      ))}
+
+                      {task.tags &&
+                        task.tags.map((tag) => (
+                          <Chip
+                            key={tag}
+                            label={tag}
+                            size="small"
+                            variant="outlined"
+                          />
+                        ))}
+
                       {task.dueDate && (
                         <Chip
-                          label={new Date(task.dueDate).toLocaleString()}
+                          label={new Date(
+                            task.dueDate
+                          ).toLocaleString()}
                           size="small"
                         />
                       )}
-                      {isOverdue && <Chip label="Overdue" size="small" color="error" />}
-                      {!isOverdue && isDueToday && <Chip label="Due Today" size="small" color="warning" />}
+
+                      {isOverdue && (
+                        <Chip
+                          label="Overdue"
+                          size="small"
+                          color="error"
+                        />
+                      )}
+
+                      {!isOverdue && isDueToday && (
+                        <Chip
+                          label="Due Today"
+                          size="small"
+                          color="warning"
+                        />
+                      )}
                     </Stack>
                   </Box>
 
-                  <IconButton color="primary" onClick={() => startEdit(task)}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => startEdit(task)}
+                  >
                     <EditIcon />
                   </IconButton>
 
-                  <IconButton color="error" onClick={() => setDeleteId(task._id)}>
+                  <IconButton
+                    color="error"
+                    onClick={() => setDeleteId(task._id)}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </Box>
@@ -260,17 +410,30 @@ export default function TodoItem() {
         );
       })}
 
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
-        <DialogTitle>Delete this task?</DialogTitle>
+      <Dialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+      >
+        <DialogTitle>
+          Delete this task?
+        </DialogTitle>
+
         <DialogContent>
           <DialogContentText>
-            This action can&apos;t be undone. The task will be permanently removed.
+            This action can&apos;t be undone.
+            The task will be permanently
+            removed.
           </DialogContentText>
         </DialogContent>
+
         <DialogActions>
-          <Button onClick={() => setDeleteId(null)} color="inherit">
+          <Button
+            onClick={() => setDeleteId(null)}
+            color="inherit"
+          >
             Cancel
           </Button>
+
           <Button
             variant="contained"
             color="error"
