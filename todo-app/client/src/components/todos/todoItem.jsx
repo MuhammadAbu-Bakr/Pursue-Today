@@ -182,7 +182,12 @@ export default function TodoItem() {
                     </Grid>
 
                     <Grid item xs={12} md={7}>
-                      <FormControl fullWidth>
+                      <FormControl
+                        fullWidth
+                        sx={{
+                          minWidth: 220,
+                        }}
+                      >
                         <InputLabel id="edit-priority-label">
                           Priority
                         </InputLabel>
@@ -191,9 +196,10 @@ export default function TodoItem() {
                           labelId="edit-priority-label"
                           value={editPriority}
                           label="Priority"
-                          onChange={(e) =>
-                            setEditPriority(e.target.value)
-                          }
+                          onChange={(e) => setEditPriority(e.target.value)}
+                          sx={{
+                            width: "100%",
+                          }}
                         >
                           <MenuItem value="">
                             <em>None</em>
