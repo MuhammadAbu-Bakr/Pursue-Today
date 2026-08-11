@@ -3,14 +3,22 @@ const User = require("../models/User");
 const DEFAULT_MAX_STORAGE_BYTES = 30 * 1024 * 1024;
 
 
-function getTodoSize({ text = "", completed = false, dueDate = null, priority = "", category = "", tags = [] }) {
+function getTodoSize({ text = "", completed = false, dueDate = null, priority = "", category = "", tags = [], attachments = [] }) {
   let size = Buffer.byteLength(text, "utf8") + Buffer.byteLength(String(completed), "utf8");
   if (dueDate) size += Buffer.byteLength(String(dueDate), "utf8");
   if (priority) size += Buffer.byteLength(priority, "utf8");
   if (category) size += Buffer.byteLength(category, "utf8");
   if (tags && tags.length > 0) size += Buffer.byteLength(tags.join(","), "utf8");
+  if (attachments && attachments.length > 0) {
+    for (const att of attachments) {
+      if (att.url)      size += Buffer.byteLength(att.url, "utf8");
+      if (att.filename) size += Buffer.byteLength(att.filename, "utf8");
+      if (att.publicId) size += Buffer.byteLength(att.publicId, "utf8");
+    }
+  }
   return size;
 }
+
 
 
 async function assertWithinQuota(userId, newContent, previousSize = 0) {

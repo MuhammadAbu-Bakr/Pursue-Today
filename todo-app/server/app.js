@@ -3,10 +3,12 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 
-const todoRoutes = require("./routes/todoRoutes");
-const authRoutes = require("./routes/authRoutes");
-const usageRoutes = require("./routes/usageRoutes");
-const aiRoutes = require("./routes/ai");
+const todoRoutes       = require("./routes/todoRoutes");
+const authRoutes       = require("./routes/authRoutes");
+const usageRoutes      = require("./routes/usageRoutes");
+const aiRoutes         = require("./routes/ai");
+const attachmentRoutes = require("./routes/attachmentRoutes");
+
 
 const app = express();
 
@@ -30,7 +32,9 @@ const authLimiter = rateLimit({
 
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/todos", todoRoutes);
+app.use("/api/todos/:id/attachments", attachmentRoutes);
 app.use("/api/usage", usageRoutes);
 app.use("/api/ai", aiRoutes);
+
 
 module.exports = app;

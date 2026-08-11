@@ -320,6 +320,9 @@ export function TodoProvider({ children }) {
       setNewTags("");
 
 
+      return task;
+
+
     }catch(err){
 
       setError(err.message);
@@ -496,6 +499,62 @@ export function TodoProvider({ children }) {
 
 
     cancelEdit();
+
+  }
+
+
+
+
+  async function uploadAttachments(taskId, files) {
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files", file));
+
+
+    const response = await fetch(
+      `${API_URL}/${taskId}/attachments`,
+      {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    if (!response.ok) {
+      throw new Error(data.message || "Upload failed");
+    }
+
+
+    setTasks((prev) =>
+      prev.map((t) => (t._id === taskId ? data : t))
+    );
+
+
+    return data;
+
+  }
+
+
+
+
+  async function deleteAttachment(taskId, attachId) {
+
+    const data = await requestTodos(
+      `${API_URL}/${taskId}/attachments/${attachId}`,
+      { method: "DELETE" }
+    );
+
+
+    setTasks((prev) =>
+      prev.map((t) => (t._id === taskId ? data : t))
+    );
+
+
+    return data;
 
   }
 
@@ -680,6 +739,11 @@ export function TodoProvider({ children }) {
         applyNewTaskAction,
 
         applyEditAction,
+
+
+        uploadAttachments,
+
+        deleteAttachment,
 
       }}
 

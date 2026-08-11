@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import TodoForm from './todoForm';
-import * as TodoContext from '../context/todo-context';
+import * as TodoContext from '../../context/todo-context.jsx';
 
 describe('TodoForm', () => {
   it('renders correctly and handles input and submit', () => {

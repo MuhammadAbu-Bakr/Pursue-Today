@@ -16,8 +16,9 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { useTodo } from "../../context/todo-context.jsx";
-import AIActionsButton from "../ai/AIActionsButton.jsx";
+import { useTodo }         from "../../context/todo-context.jsx";
+import AIActionsButton     from "../ai/AIActionsButton.jsx";
+import AttachmentUploader  from "./AttachmentUploader.jsx";
 
 export default function TodoForm() {
   const {
@@ -28,13 +29,16 @@ export default function TodoForm() {
     isAdding,
     fixingId,
     applyNewTaskAction,
-    newDueDate, setNewDueDate,
-    newPriority, setNewPriority,
-    newCategory, setNewCategory,
-    newTags, setNewTags,
+    newDueDate,   setNewDueDate,
+    newPriority,  setNewPriority,
+    newCategory,  setNewCategory,
+    newTags,      setNewTags,
+    uploadAttachments,
   } = useTodo();
 
   const isFixing = fixingId === "new";
+
+  const [pendingFiles, setPendingFiles] = useState([]);
 
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" });
 
@@ -42,9 +46,12 @@ export default function TodoForm() {
     setSnackbar((s) => ({ ...s, open: false }));
   }
 
+  function showSnackbar(message, severity = "error") {
+    setSnackbar({ open: true, message, severity });
+  }
+
   async function handleAction(action) {
     if (!newTask.trim()) return;
-
     try {
       await applyNewTaskAction(action);
     } catch (err) {
@@ -53,17 +60,32 @@ export default function TodoForm() {
         err.status === 429
           ? "AI quota exceeded — please try again later."
           : err.message || "AI request failed. Please try again.";
-      setSnackbar({
-        open: true,
-        message,
-        severity: err.status === 429 ? "warning" : "error",
-      });
+      showSnackbar(message, err.status === 429 ? "warning" : "error");
     }
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    addTask();
+
+    let createdTask;
+    try {
+      createdTask = await addTask();
+    } catch (err) {
+      return;
+    }
+
+    if (createdTask && pendingFiles.length > 0) {
+      try {
+        await uploadAttachments(createdTask._id, pendingFiles);
+        setPendingFiles([]);
+      } catch (err) {
+        showSnackbar(
+          err.message || "Task created but file upload failed. You can re-attach files by editing the task.",
+          "warning"
+        );
+        setPendingFiles([]);
+      }
+    }
   }
 
   return (
@@ -99,32 +121,25 @@ export default function TodoForm() {
                   onChange={(e) => setNewDueDate(e.target.value)}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6}>
-                <FormControl
-                  fullWidth
-                  sx={{
-                    minWidth: 220,
-                  }}
-                >
+                <FormControl fullWidth sx={{ minWidth: 220 }}>
                   <InputLabel id="new-priority-label">Priority</InputLabel>
                   <Select
                     labelId="new-priority-label"
                     value={newPriority}
                     label="Priority"
                     onChange={(e) => setNewPriority(e.target.value)}
-                    sx={{
-                      width: "100%",
-                    }}
+                    sx={{ width: "100%" }}
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
+                    <MenuItem value=""><em>None</em></MenuItem>
                     <MenuItem value="Low">Low</MenuItem>
                     <MenuItem value="Medium">Medium</MenuItem>
                     <MenuItem value="High">High</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
+
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Category"
@@ -134,6 +149,7 @@ export default function TodoForm() {
                   onChange={(e) => setNewCategory(e.target.value)}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Tags"
@@ -143,9 +159,18 @@ export default function TodoForm() {
                   onChange={(e) => setNewTags(e.target.value)}
                 />
               </Grid>
+
+              <Grid item xs={12}>
+                <AttachmentUploader
+                  pendingFiles={pendingFiles}
+                  onFilesChange={setPendingFiles}
+                  existingCount={0}
+                  disabled={isAdding}
+                />
+              </Grid>
             </Grid>
 
-            <Stack direction="row" spacing={2} justifyContent="flex-end">
+            <Stack direction="row" spacing={2} justifyContent="flex-end" flexWrap="wrap">
               <AIActionsButton isLoading={isFixing} onSelect={handleAction} />
 
               <Button
@@ -169,11 +194,16 @@ export default function TodoForm() {
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={5000}
+        autoHideDuration={6000}
         onClose={closeSnackbar}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={closeSnackbar} severity={snackbar.severity} variant="filled" sx={{ width: "100%" }}>
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>

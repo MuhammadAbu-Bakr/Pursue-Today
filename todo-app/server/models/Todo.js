@@ -32,8 +32,21 @@ const todoSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
-            index: true, 
-        }
+            index: true,
+        },
+        attachments: {
+            type: [
+                {
+                    publicId:   { type: String, required: true },
+                    url:        { type: String, required: true },
+                    filename:   { type: String, required: true },
+                    mimetype:   { type: String, required: true },
+                    size:       { type: Number, required: true },
+                    uploadedAt: { type: Date,   default: Date.now },
+                }
+            ],
+            default: [],
+        },
     },
     {
             timestamps :true
