@@ -10,7 +10,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
-const MAX_FILE_SIZE_KB = 500;
+const MAX_FILE_SIZE_KB = 1000;
 const MAX_FILES_PER_TASK = 5;
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
@@ -89,10 +89,6 @@ export default function AttachmentUploader({
         >
           Attach Files
         </Button>
-        <Typography variant="caption" color="text.secondary">
-          Max {MAX_FILE_SIZE_KB} KB · jpg, png, gif, webp, pdf, doc, docx, txt
-          {remaining > 0 && ` · ${remaining} slot${remaining !== 1 ? "s" : ""} left`}
-        </Typography>
       </Stack>
 
       {errors.length > 0 && (
