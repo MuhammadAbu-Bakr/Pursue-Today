@@ -6,9 +6,9 @@ const Todo        = require("../models/Todo");
 const requireAuth = require("../middleware/auth");
 const cloudinary  = require("../utils/cloudinary");
 
-const MAX_FILE_SIZE_KB    = Number(process.env.MAX_FILE_SIZE_KB)    || 500;
+const MAX_FILE_SIZE_KB    = Number(process.env.MAX_FILE_SIZE_KB)   ;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_KB * 1024;
-const MAX_FILES_PER_TASK  = Number(process.env.MAX_FILES_PER_TASK)  || 5;
+const MAX_FILES_PER_TASK  = Number(process.env.MAX_FILES_PER_TASK) ;
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
